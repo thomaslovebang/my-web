@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>eatenbread.com | 核心教学矩阵</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle, #fff3e0 0%, #ffcc80 60%, #ef6c00 100%);
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            user-select: none;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glass-card:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(93, 64, 55, 0.1);
+        }
+        .page-fade { transition: opacity 0.4s ease, transform 0.4s ease; }
+        .hidden-page { opacity: 0; pointer-events: none; transform: translateY(20px); display: none !important; }
+        .bread-emoji { position: fixed; pointer-events: none; font-size: 40px; z-index: 200; transform: translate(-50%, -50%); }
+        .hero-text { color: #5d4037; text-shadow: 2px 2px 0px rgba(255, 255, 255, 0.4); }
+        .sub-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; width: 100%; }
+        
+        /* 专注模式：图文并茂布局 */
+        .tutorial-step {
+            display: flex; gap: 2rem; align-items: center;
+            padding: 2.5rem 0; border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        @media (max-width: 768px) {
+            .tutorial-step { flex-direction: column; text-align: center; }
+            .step-img { width: 100% !important; }
+        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="overflow-x-hidden">
+
+    <div id="home-page" class="page-fade">
+        <header class="pt-20 pb-10 text-center">
+            <h1 class="text-6xl font-black hero-text mb-4 tracking-tighter uppercase">eatenbread.com</h1>
+        </header>
+        <main class="container mx-auto px-6 max-w-6xl">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 text-center">
+                <div class="glass-card p-8 rounded-3xl cursor-pointer" onclick="openPage('survival')">
+                    <div class="text-4xl mb-4">🗺️</div><h3 class="text-2xl font-bold text-stone-800">生存指南</h3>
+                </div>
+                <div class="glass-card p-8 rounded-3xl cursor-pointer" onclick="openPage('pvp')">
+                    <div class="text-4xl mb-4">⚔️</div><h3 class="text-2xl font-bold text-stone-800">面包武道馆</h3>
+                </div>
+                <div class="glass-card p-8 rounded-3xl cursor-pointer" onclick="openPage('redstone')">
+                    <div class="text-4xl mb-4">⚙️</div><h3 class="text-2xl font-bold text-stone-800">红石实验室</h3>
+                </div>
+                <div class="glass-card p-8 rounded-3xl cursor-pointer" onclick="openPage('art')">
+                    <div class="text-4xl mb-4">🎨</div><h3 class="text-2xl font-bold text-stone-800">黄金艺术馆</h3>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="detail-page" class="page-fade hidden-page fixed inset-0 overflow-y-auto bg-transparent p-6 pt-24 no-scrollbar">
+        <div class="container mx-auto max-w-6xl">
+            <button onclick="backToHome(event)" class="fixed top-8 left-8 text-stone-700 hover:text-stone-900 font-black z-[110] bg-white/30 px-6 py-2 rounded-full backdrop-blur-md border border-white/20">← BACK</button>
+            <div class="text-center mb-12"><h2 id="detail-title" class="text-5xl font-black text-stone-800 hero-text"></h2></div>
+            <div id="sub-blocks-container" class="sub-grid pb-20"></div>
+        </div>
+    </div>
+
+    <div id="article-overlay" class="page-fade hidden-page fixed inset-0 z-[150] bg-stone-950/95 backdrop-blur-2xl flex justify-center items-center">
+        <div class="w-full max-w-5xl h-screen md:h-[90vh] glass-card overflow-hidden rounded-none md:rounded-[3rem] border border-white/10 flex flex-col shadow-2xl">
+            <div class="p-8 border-b border-white/10 flex justify-between items-center bg-stone-900/50">
+                <div>
+                    <span id="article-category" class="text-orange-500 font-mono text-xs tracking-widest uppercase mb-1 block underline underline-offset-4"></span>
+                    <h2 id="article-title" class="text-3xl font-black text-white uppercase tracking-tight"></h2>
+                </div>
+                <button onclick="closeArticle()" class="text-stone-500 hover:text-white text-5xl transition-transform hover:rotate-90">×</button>
+            </div>
+            
+            <div id="article-content" class="flex-grow overflow-y-auto p-8 md:p-12 space-y-2 no-scrollbar bg-stone-900/20">
+                </div>
+        </div>
+    </div>
+
+    <script>
+        /* 核心配置：面包武道馆已整合配方与技巧 */
+        const contentData = {
+    survival: { title: "板块一：生存指南", items: [{name:"1. 基础准备", subItems:["1.1 基础工具", "1.2 建筑材料"]}, "2. 饥饿值&血量", "3. 村民贸易", "4. 合理的“外挂”", "5. 下界&末地“通行证”", "6. 高级追求", "7. 全成就"] },
+    pvp: { title: "板块二：面包武道馆", items: ["1. 合成配方", "2. 基础身法", "3. 武器博弈", "4. 防御保命", "5. 高级进阶"] },
+    redstone: { 
+        title: "板块三：红石实验室", 
+        items: [
+            { name: "1. 能量起源", subItems: ["1.1 能量源头", "1.2 红石基础"] },
+            { name: "2. 自动工厂", subItems: ["2.1 自动刷石机", "2.2 甘蔗收割机", "2.3 盾构机"] },
+            { name: "3. 红石大脑", subItems: ["3.1 半自动农场", "3.2 物品分类机", "3.3 2x2活塞门"] },
+            { name: "4. 熟练于心", subItems: ["4.1 3x3螺旋门", "4.2 双向飞行器", "4.3 自动酿造台"] },
+            { name: "5. 扬帆起航", subItems: ["5.1 16色羊毛厂", "5.2 循环活塞库", "5.3 试炼密室刷怪塔"] },
+            { name: "💀 最终挑战", subItems: ["世吞 (World Eater)", "天基屠龙炮"] }
+        ] 
+    },
+    art: { title: "板块四：黄金艺术馆", items: ["1. 建筑美学", "2. 创意材质包", "3. 交互美学", "4. 光影搭配"] }
+};
+
+        const tacticalData = {
+            "1. 合成配方": {
+                category: "Weapon Crafting",
+                title: "武器库合成清单",
+                steps: [
+                    { img: "img/axe.png", text: "<strong>斧 (Axe):</strong> <br>材料：3*材料 + 2*木棍。<br>清单：左上/中上/左中材料，中间/下中木棍。<br><strong>面包批注：</strong> 1.21 破盾核心。不仅是伐木工具，更是应对持盾敌人的暴力解法。" },
+                    { img: "img/sword.png", text: "<strong>剑 (Sword):</strong> <br>材料：2*材料 + 1*木棍。<br>清单：中上/正中材料，下中木棍。<br><strong>面包批注：</strong> 输出基石。横扫之刃附魔后是清理群怪和近身缠斗的最强选择。" },
+                    { img: "img/bow.png", text: "<strong>弓 (Bow):</strong> <br>材料：3*木棍 + 3*线。<br>清单：左中/下中/上中木棍，右侧垂直排线。<br><strong>面包批注：</strong> 压制利器。力量V+无限附魔后，它是远距离持续输出的王者。" },
+                    { img: "img/crossbow.png", text: "<strong>弩 (Crossbow):</strong> <br>材料：3*木棍 + 2*线 + 1*铁锭 + 1*钩子。<br>清单：V型木棍，铁锭居顶，中心钩子，两侧放线。<br><strong>面包批注：</strong> 爆发神器。配合烟花火箭，弩就是MC里的便携式大炮。" },
+                    { img: "img/mace.png", text: "<strong>重锤 (Mace):</strong> <br>材料：1*沉重核心 + 1*旋风棒。<br>清单：中上沉重核心，正中旋风棒。<br><strong>面包批注：</strong> 1.21 真神武器。获取极难，代表了面包武道馆的顶级战力。" },
+                    { img: "img/trident.png", text: "<strong>三叉戟 (Trident):</strong> <br>材料：不可合成。<br>清单：由持戟溺尸概率掉落。<br><strong>面包批注：</strong> 海陆空通杀。获取虽难，但‘忠诚’与‘激流’附魔让它无可替代。" }
+                ]
+            },
+            
+            
+            "3. 武器博弈": {
+                category: "Combat Skills",
+                title: "1.21 核心战斗手册 (持续更新中)",
+                steps: [
+                    /* --- 基础与近战 --- */
+                    { 
+                        img: "skill_crit.jpg", 
+                        text: "<strong>1. 跳劈 (Crit)</strong><br>• <b>要点：</b> 下落瞬间攻击。<br>• <b>优势：</b> 伤害提升50%，爆发力最强。<br>• <b>劣势：</b> 跳跃轨迹固定，易被反制。" 
+                    },
+                    { 
+                        img: "skill_shield_break.jpg", 
+                        text: "<strong>2. 破盾 (Disable)</strong><br>• <b>要点：</b> 斧头重击举盾玩家。<br>• <b>优势：</b> 强制对方5秒无法防御，撕开防线。<br>• <b>劣势：</b> 斧头攻速慢，未中则空档巨大。" 
+                    },
+                    { 
+                        img: "skill_sweep.jpg", 
+                        text: "<strong>3. 横扫 (Sweep)</strong><br>• <b>要点：</b> 站立或慢走时用剑攻击。<br>• <b>优势：</b> 范围控场，适合 1 vs 多。<br>• <b>劣势：</b> 单体伤害平庸。" 
+                    },
+                    { 
+                        img: "skill_back.jpg", 
+                        text: "<strong>4. 背袭 (Backstab)</strong><br>• <b>要点：</b> 绕后进入对手视角盲区。<br>• <b>优势：</b> 无法被格挡，造成心理慌乱。<br>• <b>劣势：</b> 极度依赖身法（S-Tap/Circle Strafe）。" 
+                    },
+
+                    /* --- 进阶与博弈 --- */
+                    { 
+                        img: "skill_shield_up.jpg", 
+                        text: "<strong>5. 瞬盾 (Insta-Shield)</strong><br>• <b>要点：</b> 仅在受击瞬间举盾。<br>• <b>优势：</b> 兼顾移动速度与防御。<br>• <b>劣势：</b> 容错率低，预判失误会吃满伤。" 
+                    },
+                    { 
+                        img: "skill_w_tap.jpg", 
+                        text: "<strong>6. 压制 (W-Tap)</strong><br>• <b>要点：</b> 击中后瞬间松开并重按W。<br>• <b>优势：</b> 每一刀都带击退，实现“无伤叠刀”。<br>• <b>劣势：</b> 节奏感极强，需要肌肉记忆。" 
+                    },
+                    { 
+                        img: "skill_position.jpg", 
+                        text: "<strong>7. 卡位 (Positioning)</strong><br>• <b>要点：</b> 利用方块边缘或蜘蛛网限制对方走位。<br>• <b>优势：</b> 剥夺对手跳劈条件，掌握主动权。<br>• <b>劣势：</b> 容易把自己也卡死在角落。" 
+                    },
+
+                    /* --- 1.21 专属与远程 --- */
+                    { 
+                        img: "skill_mace_drop.jpg", 
+                        text: "<strong>8. 坠击 (Heavy Drop)</strong><br>• <b>要点：</b> 重锤高处下落击中目标。<br>• <b>优势：</b> 伤害无上限，附带气浪击退。<br>• <b>劣势：</b> 未击中会吃巨额掉落伤害。" 
+                    },
+                    { 
+                        img: "skill_wind.jpg", 
+                        text: "<strong>9. 风弹位移 (Wind Leap)</strong><br>• <b>要点：</b> 脚下风弹起跳接重锤或跳劈。<br>• <b>优势：</b> 人为创造高地，瞬间爆发。<br>• <b>劣势：</b> 滞空时间长，容易被远程射落。" 
+                    },
+                    { 
+                        img: "skill_blind_fire.jpg", 
+                        text: "<strong>10. 盲射 (Hip Fire)</strong><br>• <b>要点：</b> 弩在不瞄准的情况下近距离瞬发。<br>• <b>优势：</b> 极高突发性，打断对方蓄力。<br>• <b>劣势：</b> 弹药消耗快，远距离精度差。" 
+                    },
+                    { 
+                        img: "skill_firework.jpg", 
+                        text: "<strong>11. 火箭炸弹 (Firework Rush)</strong><br>• <b>要点：</b> 弩装载烟花火箭朝脚下或掩体射击。<br>• <b>优势：</b> 范围爆炸，无视盾牌死角。<br>• <b>劣势：</b> 对自己也有一定的误伤风险。" 
+                    },
+                    { 
+                        img: "skill_trident_pull.jpg", 
+                        text: "<strong>12. 引雷牵制 (Trident Trap)</strong><br>• <b>要点：</b> 雷雨天利用引雷三叉戟定点打击。<br>• <b>优势：</b> 远程高额伤害+雷击硬直。<br>• <b>劣势：</b> 环境限制极大（必须雷雨）。" 
+                    }
+                ]
+            },
+            /* --- 1. 能量起源系列 --- */
+            "1.1 能量源头": {
+                category: "Redstone Power",
+                title: "核心能源合成清单",
+                steps: [
+                    { img: "img/redstone_torch.png", text: "<strong>红石火把:</strong> 信号反转的核心（非门）。能向上方块传导强信号。" },
+                    { img: "img/redstone_block.png", text: "<strong>红石块:</strong> 永恒的 15 级强信号源，抗干扰能力极强。" },
+                    { img: "img/observer.png", text: "<strong>侦测器:</strong> 监视方块更新。只要面前有变化，就发出一帧脉冲。" }
+                ]
+            },
+            "1.2 红石基础": {
+                category: "Redstone Theory",
+                title: "红石能量基础知识",
+                steps: [
+                    { img: "img/redstone_decay.png", text: "<strong>1. 15格衰减律:</strong> 信号随距离逐格递减。第 16 格将彻底失去动力。" },
+                    { img: "img/redstone_invert.png", text: "<strong>2. 逻辑反转:</strong> 在被充能方块侧面插火把会熄灭，这是逻辑门的基础。" },
+                    { img: "img/redstone_freq.png", text: "<strong>3. 高频红石:</strong> 利用侦测器脸对脸监视，产生极高频率脉冲。" },
+                    { img: "img/redstone_signal.png", text: "<strong>4. 信号传输:</strong> 必须直接连接或指向方块才能触发信号。" }
+                ]
+            },
+
+            /* --- 2. 自动工厂系列 --- */
+            "2.1 自动刷石机": {
+                category: "Level 2: Factory",
+                title: "简易脉冲刷石机投影",
+                steps: [{text: "<strong>原理：</strong> 水+岩浆生成原石。<br><strong>面包批注：</strong> 观察者脉冲频率不能过快，给原石生成留出冷却时间。" }]
+            },
+           /* --- 找到 tacticalData 里的 2.2 部分，替换如下 --- */
+            "2.2 甘蔗收割机": {
+                category: "Level 2: Factory",
+                title: "观察者式自动甘蔗机",
+                steps: [{ 
+                    img: "img/甘蔗机.png", 
+                    text: `
+                        <div style="border: 1px solid #ffa500; background: rgba(255,165,0,0.2); padding: 15px; border-radius: 8px; margin-top: 10px;">
+                            <p style="margin-bottom: 10px;"><strong>原理：</strong> 观察者监测高度 -> 活塞切割。<br>
+                            <strong>面包批注：</strong> 烟花火箭的材料来源，这是通往飞行自由的第一步。</p>
+                            
+                            <hr style="border-color: rgba(255,165,0,0.3); margin: 10px 0;">
+                            
+                            <div style="text-align: center; padding: 10px;">
+                                <p style="font-size: 0.85em; color: #ffa500; margin-bottom: 8px;">📁 数字化投影文件已就绪</p>
+                                <a href="blueprints/甘蔗机2_2.litematic" download="甘蔗机2_2.litematic" 
+                                style="display: inline-block; background: #ffa500; color: #000; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold; transition: 0.3s;"
+                                onmouseover="this.style.background='#ffb833'" 
+                                onmouseout="this.style.background='#ffa500'">
+                                💾 点击获取 .litematic 图纸
+                                </a>
+                            </div>
+                        </div>
+                    ` 
+                }]
+            },
+            "2.3 盾构机":{
+                category: "Level 2: Factory",
+                title: "全自动地下盾构机",
+                steps: [{text: "<strong>原理：</strong> 活塞+漏斗+岩浆熔岩+无限复制TNT挖掘与运输。<br><strong>面包批注：</strong> 隐蔽且高效并且不容易炸膛。" }]
+            },
+
+            /* --- 3. 红石大脑系列 --- */
+            "3.3 2x2活塞门": {
+                category: "Level 3: Logic",
+                title: "经典内吸式平滑门",
+                steps: [{text: "<strong>原理：</strong> 利用火把熄灭（非门）控制门开启。<br><strong>面包批注：</strong> 建筑党的必修课，隐藏基地的标配。" }]
+            },
+            "3.2 物品分类机": {
+                category: "Level 3: Logic",
+                title: "无损物品筛选过滤系统",
+                steps: [{text: "<strong>原理：</strong> 比较器检测漏斗中物品溢出的强度。<br><strong>面包批注：</strong> 填充物必须放够，否则会干扰隔壁的漏斗。" }]
+            },
+            "3.1 半自动农场": {
+                category: "Level 3: Logic",
+                title: "全自动小麦/马铃薯收割机",
+                steps: [{ 
+                    img: "img/wheat_farm.png", 
+                    text: `
+                        <div style="border: 1px solid #ffa500; background: rgba(255,165,0,0.2); padding: 15px; border-radius: 8px; margin-top: 10px;">
+                            <p style="margin-bottom: 10px;"><strong>原理：</strong> 检测小麦的成长度用水流冲刷到漏斗收集。<br>
+                            <strong>面包批注：</strong> 摆放红石考验你的身法，这不仅是农场，更是你红石基本功的试金石。</p>
+                            
+                            <hr style="border-color: rgba(255,165,0,0.3); margin: 10px 0;">
+                            
+                            <div style="text-align: center; padding: 10px;">
+                                <p style="font-size: 0.85em; color: #ffa500; margin-bottom: 8px;">📁 数字化投影文件已就绪</p>
+                                <a href="blueprints/半自动农场3_1.litematic" download="wheat_farm3_1.litematic" 
+                                style="display: inline-block; background: #ffa500; color: #000; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold; transition: 0.3s;"
+                                onmouseover="this.style.background='#ffb833'" 
+                                onmouseout="this.style.background='#ffa500'">
+                                💾 点击获取 .litematic 图纸
+                                </a>
+                            </div>
+                        </div>
+                    ` 
+                }]
+            },
+
+            /* --- 4. 熟练于心系列 --- */
+            "4.1 3x3螺旋门": {
+                category: "Level 4: Advanced",
+                title: "螺旋开启式机械门",
+                steps: [{text: "<strong>原理：</strong> 复杂的二次抽离时序。<br><strong>疑难点：</strong> 中心方块收不回来通常是因为中继器延迟点错了。" }]
+            },
+            "4.2 双向飞行器": {
+                category: "Level 4: Advanced",
+                title: "粘液块引擎飞行机",
+                steps: [{text: "<strong>原理：</strong> 侦测器与活塞的互推逻辑。<br><strong>面包批注：</strong> 跨越平原的利器，也是大型工程的动力核心。" }]
+            },
+            "4.3 自动酿造台": {
+                category: "Level 4: Advanced",
+                title: "全自动药水工厂",
+                steps: [{text: "<strong>原理：</strong> 漏斗锁死系统与时钟延时。<br><strong>面包批注：</strong> 必须等药水酿完再解锁漏斗，否则全是半成品。" }]
+            },
+
+            /* --- 5. 扬帆起航系列 --- */
+            "5.1 16色羊毛厂": {
+                category: "Level 5: Master",
+                title: "全自动羊毛染色一体化",
+                steps: [{text: "<strong>核心：</strong> 侦测器监控草地 -> 发射器自动剪毛。<br><strong>面包批注：</strong> 艺术馆的基石。有了它，你才有挥霍色彩的资本。" }]
+            },
+            "5.2 循环活塞库": {
+                category: "Level 5: Master",
+                title: "方块循环存储系统 (BESS)",
+                steps: [{text: "<strong>核心：</strong> 闭环时序逻辑。<br><strong>疑难点：</strong> 四个拐角的延迟必须逐次增加，否则会卡死。" }]
+            },
+            "5.3 试炼密室刷怪塔": {
+                category: "Level 5: Master",
+                title: "1.21 旋风人自动猎场",
+                steps: [{text: "<strong>核心：</strong> 1.21 新特性。利用风弹引导旋风人。<br><strong>面包批注：</strong> 只有紧跟版本的实验室，才是合格的实验室。" }]
+            },
+
+            /* --- 💀 最终挑战 --- */
+            "世吞 (World Eater)": {
+                category: "Legendary",
+                title: "世界吞噬者 - 工业巨兽",
+                steps: [{text: "<strong>核心：</strong> TNT 复制阵列 + 扫地机。<br><strong>警告：</strong> 必须确保所有模块在加载范围内，否则机器会自毁！" }]
+            },
+            "天基屠龙炮": {
+                category: "Legendary",
+                title: "跨维度打击系统",
+                steps: [{text: "<strong>核心：</strong> 珍珠定位 + 超量 TNT 引擎。<br><strong>面包批注：</strong> 红石界的核武，启动即无悔。" }]
+            }
+        };
+
+
+        /* 切换逻辑 */
+        /* 核心逻辑：支持多级跳转 */
+        function openPage(category, subItems = null, customTitle = null) {
+            const home = document.getElementById('home-page');
+            const detail = document.getElementById('detail-page');
+            const container = document.getElementById('sub-blocks-container');
+            
+            // 确定数据源：是板块一级数据，还是传进来的二级/三级子数据
+            const data = subItems ? { title: customTitle, items: subItems } : contentData[category];
+            
+            container.innerHTML = '';
+            document.getElementById('detail-title').innerText = data.title;
+
+            data.items.forEach(item => {
+                const block = document.createElement('div');
+                block.className = 'glass-card p-6 rounded-2xl text-center font-bold text-stone-700 hover:text-stone-900 cursor-pointer transition-all active:scale-95';
+                
+                // 判断是对象（还有下级）还是字符串（直接开文章）
+                const itemName = typeof item === 'object' ? item.name : item;
+                block.innerText = itemName;
+
+                block.onclick = (e) => {
+                    e.stopPropagation();
+                    if (typeof item === 'object') {
+                        // 如果有下级，递归调用自己，渲染三级菜单
+                        openPage(null, item.subItems, item.name);
+                    } else if (tacticalData[item]) {
+                        // 如果是最终内容，打开黑色弹窗
+                        showTactical(tacticalData[item]);
+                    } else {
+                        alert("【" + item + "】的内容面包正在烤箱里烤着呢...");
+                    }
+                };
+                container.appendChild(block);
+            });
+
+            // 切换页面动画
+            home.style.opacity = '0';
+            setTimeout(() => { 
+                home.classList.add('hidden-page'); 
+                detail.classList.remove('hidden-page'); 
+                setTimeout(() => { 
+                    detail.style.opacity = '1'; 
+                    detail.style.transform = 'translateY(0)'; 
+                }, 50); 
+            }, 400);
+        }
+
+        // 修改返回逻辑，现在返回会直接回首页（如果想返回上一级需要更复杂的栈，目前建议直接回主页最清爽）
+        function backToHome(e) {
+            if(e) e.stopPropagation();
+            window.location.reload(); // 最简单的多级返回方案：直接重置到主页
+        }
+
+        function showTactical(data) {
+            const overlay = document.getElementById('article-overlay');
+            document.getElementById('article-category').innerText = data.category;
+            document.getElementById('article-title').innerText = data.title;
+            const container = document.getElementById('article-content');
+            
+            // 判断当前是“合成配方”还是“技巧博弈”，动态给比例
+            const isCrafting = data.title.includes("合成");
+            const aspectClass = isCrafting ? "aspect-square w-[300px]" : "aspect-video w-full";
+
+            container.innerHTML = data.steps.map((step, index) => `
+                <div class="tutorial-step">
+                    <div class="step-img flex-shrink-0 ${isCrafting ? 'w-full md:w-auto flex justify-center' : 'w-full md:w-1/2'}">
+                        <div class="relative group bg-black/40 rounded-3xl overflow-hidden ${aspectClass} border border-white/5 flex items-center justify-center shadow-inner">
+                            <img src="${step.img}" class="w-full h-full object-contain p-2 group-hover:scale-110 transition-transform" onerror="this.src='https://via.placeholder.com/400x400/222/555?text=Crafting+Image'">
+                            <span class="absolute top-4 left-4 bg-orange-600 text-white w-8 h-8 rounded-xl flex items-center justify-center font-black text-sm shadow-2xl">0${index+1}</span>
+                        </div>
+                    </div>
+                    <div class="${isCrafting ? 'w-full md:flex-grow' : 'w-full md:w-1/2'} px-4">
+                        <p class="text-stone-300 leading-relaxed text-xl">${step.text}</p>
+                    </div>
+                </div>
+            `).join('');
+            overlay.classList.remove('hidden-page');
+            setTimeout(() => { overlay.style.opacity = '1'; }, 50);
+        }
+
+        function closeArticle() {
+            const overlay = document.getElementById('article-overlay');
+            overlay.style.opacity = '0';
+            setTimeout(() => { overlay.classList.add('hidden-page'); }, 400);
+        }
+
+        function backToHome(e) {
+            if(e) e.stopPropagation();
+            const home = document.getElementById('home-page');
+            const detail = document.getElementById('detail-page');
+            detail.style.opacity = '0';
+            setTimeout(() => { detail.classList.add('hidden-page'); home.classList.remove('hidden-page'); setTimeout(() => { home.style.opacity = '1'; }, 50); }, 400);
+        }
+
+        /* 喷泉特效 */
+        const bt = ['🍞', '🥐', '🥖', '🥨', '🥯'];
+        document.addEventListener('mousedown', (e) => {
+            for (let i = 0; i < 6; i++) {
+                const el = document.createElement('div'); el.className = 'bread-emoji'; el.innerText = bt[Math.floor(Math.random()*bt.length)]; document.body.appendChild(el);
+                let px = e.clientX, py = e.clientY, cvx = (Math.random()-0.5)*15, cvy = (Math.random()-0.5)*15, op = 1;
+                function a() { px+=cvx; py+=cvy; cvy+=0.5; op-=0.02; el.style.left=px+'px'; el.style.top=py+'px'; el.style.opacity=op; if(op>0) requestAnimationFrame(a); else el.remove(); }
+                requestAnimationFrame(a);
+            }
+        });
+    </script>
+</body>
+</html>
