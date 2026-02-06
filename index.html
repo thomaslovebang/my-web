@@ -192,8 +192,28 @@
                         </div>` 
                 }]
             }
-        };
-        
+        },
+        "3.1 半自动农场": {
+                category: "Level 3: Intermediate",
+                title: "水流控制式半自动农场",
+                color: "#FFD700", // YELLOW for Level 3
+                steps: [
+                    { 
+                        img: "img/wheat_farm.png", 
+                        text: `
+                            <div style="border: 1px solid #FFD700; background: rgba(255,215,0,0.1); padding: 15px; border-radius: 8px; margin-top: 10px;">
+                                <p style="margin-bottom: 10px;"><strong>原理：</strong> 利用<strong>发射器 (Dispenser)</strong> 控制水流。按下按钮放出水流冲刷成熟作物，再次按下收回水流。</p>
+                                <strong>面包批注：</strong> 这是效率提升的第一步。虽然需要手动补种，但收割速度提升了 10 倍！建议配合<strong>漏斗 (Hopper)</strong> 自动收集。
+                                <hr style="border-color: rgba(255,215,0,0.3); margin: 10px 0;">
+                                <div style="text-align: center; padding: 10px;">
+                                    <a href="blueprints/半自动农场3_1.litematic" download style="display: inline-block; background: #FFD700; color: #000; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold;">💾 下载 Litematic 图纸</a>
+                                </div>
+                            </div>
+                        ` 
+                    }
+                ]
+            },
+            
         function openPage(category, subItems = null, customTitle = null) {
             const home = document.getElementById('home-page');
             const detail = document.getElementById('detail-page');
@@ -287,3 +307,4 @@
     </script>
 </body>
 </html>
+
