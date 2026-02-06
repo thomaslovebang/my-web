@@ -182,9 +182,9 @@
                 }]
             },
             "3.1 甘蔗收割机": {
-                category: "Level 3: Intermediate", // Moved to Level 3
+                category: "Level 3: Intermediate",
                 title: "观察者式自动甘蔗机",
-                color: "#FFD700", // Changed to YELLOW for Level 3
+                color: "#FFD700",
                 steps: [{ 
                     img: "img/sugarcane_machine.png", 
                     text: `<div style="border: 1px solid #FFD700; background: rgba(255,215,0,0.1); padding: 15px; border-radius: 8px; margin-top: 10px;">
@@ -194,9 +194,9 @@
                 }]
             },
             "2.2 半自动农场": {
-                category: "Level 2: Factory", // Moved to Level 2
+                category: "Level 2: Factory",
                 title: "水流控制式半自动农场",
-                color: "#4CAF50", // Changed to GREEN for Level 2
+                color: "#4CAF50",
                 steps: [
                     { 
                         img: "img/wheat_farm.png", 
@@ -212,8 +212,9 @@
                         ` 
                     }
                 ]
-            },
-            
+            }
+        }; // <--- Correctly closing the tacticalData object here.
+
         function openPage(category, subItems = null, customTitle = null) {
             const home = document.getElementById('home-page');
             const detail = document.getElementById('detail-page');
@@ -254,7 +255,10 @@
 
         function showTactical(data) {
             const overlay = document.getElementById('article-overlay');
-            document.getElementById('article-category').innerText = data.category;
+            const catEl = document.getElementById('article-category');
+            catEl.innerText = data.category;
+            catEl.style.color = data.color || "#f97316"; 
+            
             document.getElementById('article-title').innerText = data.title;
             const container = document.getElementById('article-content');
             const isCrafting = data.title.includes("合成") || data.category.includes("Power");
@@ -307,6 +311,3 @@
     </script>
 </body>
 </html>
-
-
-
