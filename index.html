@@ -206,14 +206,12 @@
             }
         };
 
+        // 在 openPage 函数里，我删掉了关于 searchInput 的逻辑
         function openPage(category, subItems = null, customTitle = null) {
             const home = document.getElementById('home-page');
             const detail = document.getElementById('detail-page');
             const container = document.getElementById('sub-blocks-container');
-            const searchInput = document.getElementById('search-input');
-            
-            if(searchInput) searchInput.value = ''; 
-
+        
             let data;
             if (subItems) {
                 data = { title: customTitle, items: subItems };
@@ -232,6 +230,26 @@
                 
                 block.onclick = (e) => {
                     e.stopPropagation();
+                    if (typeof item === 'object' && item.subItems) {
+                        openPage(null, item.subItems, item.name);
+                    } else if (tacticalData[itemName]) {
+                        showTactical(tacticalData[itemName]);
+                    } else {
+                        alert("【" + itemName + "】正在努力烤制中...");
+                    }
+                };
+                container.appendChild(block);
+            });
+        
+            home.style.opacity = '0';
+            setTimeout(() => { 
+                home.classList.add('hidden-page'); 
+                detail.classList.remove('hidden-page'); 
+                setTimeout(() => { detail.style.opacity = '1'; detail.style.transform = 'translateY(0)'; }, 50); 
+            }, 400);
+        }
+        
+        // 注意：原本这里的 filterItems 函数已经被我彻底删除了
                     if (typeof item === 'object' && item.subItems) {
                         openPage(null, item.subItems, item.name);
                     } else if (tacticalData[itemName]) {
@@ -309,6 +327,7 @@
     </script>
 </body>
 </html>
+
 
 
 
