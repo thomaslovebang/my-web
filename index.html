@@ -93,8 +93,8 @@
                 title: "板块三：红石实验室", 
                 items: [
                     { name: "1. 能量起源", subItems: ["1.1 能量源头", "1.2 红石基础"] },
-                    { name: "2. 自动工厂", subItems: ["2.1 自动刷石机", "2.2 甘蔗收割机", "2.3 盾构机"] },
-                    { name: "3. 红石大脑", subItems: ["3.1 半自动农场", "3.2 物品分类机", "3.3 2x2活塞门"] },
+                    { name: "2. 自动工厂", subItems: ["2.1 自动刷石机", "2.2 半自动农场", "2.3 盾构机"] },
+                    { name: "3. 红石大脑", subItems: ["3.1 甘蔗收割机", "3.2 物品分类机", "3.3 2x2活塞门"] },
                     { name: "4. 熟练于心", subItems: ["4.1 3x3螺旋门", "4.2 双向飞行器", "4.3 自动酿造台"] },
                     { name: "5. 扬帆起航", subItems: ["5.1 16色羊毛厂", "5.2 循环活塞库", "5.3 试炼密室刷怪塔"] },
                     { name: "💀 最终挑战", subItems: ["世吞 (World Eater)", "天基屠龙炮"] }
@@ -181,38 +181,38 @@
                     ` 
                 }]
             },
-            "2.2 甘蔗收割机": {
-                category: "Level 2: Factory",
+            "3.1 甘蔗收割机": {
+                category: "Level 3: Intermediate", // Moved to Level 3
                 title: "观察者式自动甘蔗机",
+                color: "#FFD700", // Changed to YELLOW for Level 3
                 steps: [{ 
                     img: "img/sugarcane_machine.png", 
-                    text: `<div style="border: 1px solid #4CAF50; background: rgba(76,175,80,0.1); padding: 15px; border-radius: 8px; margin-top: 10px;">
+                    text: `<div style="border: 1px solid #FFD700; background: rgba(255,215,0,0.1); padding: 15px; border-radius: 8px; margin-top: 10px;">
                             <p><strong>原理：</strong> 观察者监测高度 -> 活塞切割。</p>
-                            <a href="blueprints/sugarcane_machine2_2.litematic" download style="display: inline-block; background: #4CAF50; color: #fff; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold; margin-top: 10px;">💾 下载 Litematic 图纸</a>
+                            <a href="blueprints/sugarcane_machine3_1.litematic" download style="display: inline-block; background: #FFD700; color: #000; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold; margin-top: 10px;">💾 下载 Litematic 图纸</a>
                         </div>` 
                 }]
-            }
-        },
-        "3.1 半自动农场": {
-                category: "Level 3: Intermediate",
+            },
+            "2.2 半自动农场": {
+                category: "Level 2: Factory", // Moved to Level 2
                 title: "水流控制式半自动农场",
-                color: "#FFD700", // YELLOW for Level 3
+                color: "#4CAF50", // Changed to GREEN for Level 2
                 steps: [
                     { 
                         img: "img/wheat_farm.png", 
                         text: `
-                            <div style="border: 1px solid #FFD700; background: rgba(255,215,0,0.1); padding: 15px; border-radius: 8px; margin-top: 10px;">
+                            <div style="border: 1px solid #4CAF50; background: rgba(76,175,80,0.1); padding: 15px; border-radius: 8px; margin-top: 10px;">
                                 <p style="margin-bottom: 10px;"><strong>原理：</strong> 利用<strong>发射器 (Dispenser)</strong> 控制水流。按下按钮放出水流冲刷成熟作物，再次按下收回水流。</p>
-                                <strong>面包批注：</strong> 这是效率提升的第一步。虽然需要手动补种，但收割速度提升了 10 倍！建议配合<strong>漏斗 (Hopper)</strong> 自动收集。
-                                <hr style="border-color: rgba(255,215,0,0.3); margin: 10px 0;">
+                                <strong>面包批注：</strong> 虽然需要手动补种，但收割速度提升了 10 倍！
+                                <hr style="border-color: rgba(76,175,80,0.3); margin: 10px 0;">
                                 <div style="text-align: center; padding: 10px;">
-                                    <a href="blueprints/半自动农场3_1.litematic" download style="display: inline-block; background: #FFD700; color: #000; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold;">💾 下载 Litematic 图纸</a>
+                                    <a href="blueprints/半自动农场2_2.litematic" download style="display: inline-block; background: #4CAF50; color: #fff; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold;">💾 下载 Litematic 图纸</a>
                                 </div>
                             </div>
                         ` 
                     }
                 ]
-            },
+            };
             
         function openPage(category, subItems = null, customTitle = null) {
             const home = document.getElementById('home-page');
@@ -307,4 +307,5 @@
     </script>
 </body>
 </html>
+
 
