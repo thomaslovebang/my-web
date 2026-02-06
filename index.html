@@ -27,7 +27,7 @@
         .hidden-page { opacity: 0; pointer-events: none; transform: translateY(20px); display: none !important; }
         .bread-emoji { position: fixed; pointer-events: none; font-size: 40px; z-index: 200; transform: translate(-50%, -50%); }
         .hero-text { color: #5d4037; text-shadow: 2px 2px 0px rgba(255, 255, 255, 0.4); }
-        .sub-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; width: 100%; }
+        .sub-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; width: 100%; position: relative; z-index: 10; }
         
         .tutorial-step {
             display: flex; gap: 2rem; align-items: center;
@@ -38,6 +38,9 @@
             .step-img { width: 100% !important; }
         }
         .no-scrollbar::-webkit-scrollbar { display: none; }
+        
+        /* 确保详情页内容可以被点击 */
+        #detail-page { pointer-events: auto; }
     </style>
 </head>
 <body class="overflow-x-hidden">
@@ -61,16 +64,11 @@
         </main>
     </div>
 
-    <div id="detail-page" class="page-fade hidden-page fixed inset-0 overflow-y-auto bg-transparent p-6 pt-24 no-scrollbar">
-        <div class="container mx-auto max-w-6xl">
-            <button onclick="backToHome(event)" class="fixed top-8 left-8 text-stone-700 hover:text-stone-900 font-black z-[110] bg-white/30 px-6 py-2 rounded-full backdrop-blur-md border border-white/20">← BACK</button>
-            <div class="text-center mb-6"><h2 id="detail-title" class="text-5xl font-black text-stone-800 hero-text"></h2></div>
+    <div id="detail-page" class="page-fade hidden-page fixed inset-0 overflow-y-auto bg-transparent p-6 pt-32 no-scrollbar z-[100]">
+        <div class="container mx-auto max-w-6xl relative">
+            <button onclick="backToHome(event)" class="fixed top-8 left-8 text-stone-700 hover:text-stone-900 font-black z-[120] bg-white/50 px-6 py-2 rounded-full backdrop-blur-md border border-white/20 shadow-sm active:scale-95 transition-transform">← BACK</button>
+            <div class="text-center mb-12"><h2 id="detail-title" class="text-5xl font-black text-stone-800 hero-text"></h2></div>
             
-            <div class="max-w-md mx-auto mb-12">
-                <input type="text" id="search-input" onkeyup="filterItems()" placeholder="🔍 搜索..." 
-                class="w-full px-6 py-3 rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-stone-800 placeholder-stone-700 focus:outline-none focus:ring-2 focus:ring-orange-400 transition-all shadow-lg">
-            </div>
-
             <div id="sub-blocks-container" class="sub-grid pb-20"></div>
         </div>
     </div>
@@ -206,12 +204,11 @@
             }
         };
 
-        // 在 openPage 函数里，我删掉了关于 searchInput 的逻辑
         function openPage(category, subItems = null, customTitle = null) {
             const home = document.getElementById('home-page');
             const detail = document.getElementById('detail-page');
             const container = document.getElementById('sub-blocks-container');
-        
+            
             let data;
             if (subItems) {
                 data = { title: customTitle, items: subItems };
@@ -245,36 +242,11 @@
             setTimeout(() => { 
                 home.classList.add('hidden-page'); 
                 detail.classList.remove('hidden-page'); 
-                setTimeout(() => { detail.style.opacity = '1'; detail.style.transform = 'translateY(0)'; }, 50); 
+                setTimeout(() => { 
+                    detail.style.opacity = '1'; 
+                    detail.style.transform = 'translateY(0)'; 
+                }, 50); 
             }, 400);
-        }
-        
-        // 注意：原本这里的 filterItems 函数已经被我彻底删除了
-                    if (typeof item === 'object' && item.subItems) {
-                        openPage(null, item.subItems, item.name);
-                    } else if (tacticalData[itemName]) {
-                        showTactical(tacticalData[itemName]);
-                    } else {
-                        alert("【" + itemName + "】正在努力烤制中...");
-                    }
-                };
-                container.appendChild(block);
-            });
-        
-            home.style.opacity = '0';
-            setTimeout(() => { 
-                home.classList.add('hidden-page'); 
-                detail.classList.remove('hidden-page'); 
-                setTimeout(() => { detail.style.opacity = '1'; detail.style.transform = 'translateY(0)'; }, 50); 
-            }, 400);
-        }
-
-        function filterItems() {
-            const input = document.getElementById('search-input').value.toLowerCase();
-            const cards = document.getElementById('sub-blocks-container').getElementsByClassName('glass-card');
-            for (let card of cards) {
-                card.style.display = card.innerText.toLowerCase().includes(input) ? "" : "none";
-            }
         }
 
         function showTactical(data) {
@@ -285,7 +257,7 @@
             document.getElementById('article-title').innerText = data.title;
             const container = document.getElementById('article-content');
             
-            container.innerHTML = data.steps.map((step, index) => `
+            container.innerHTML = data.steps.map((step) => `
                 <div class="tutorial-step">
                     <div class="step-img w-full md:w-1/2 flex justify-center bg-black/40 rounded-3xl overflow-hidden aspect-video">
                         <img src="${step.img}" class="h-full object-contain p-4 transition-transform hover:scale-110" onerror="this.src='https://via.placeholder.com/400?text=Missing+Image'">
@@ -327,7 +299,3 @@
     </script>
 </body>
 </html>
-
-
-
-
