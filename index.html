@@ -112,7 +112,7 @@
                     { img: "img/axe.png", text: "<strong>斧 (Axe):</strong> <br>材料：3*材料 + 2*木棍。<br>清单：左上/中上/左中材料，中间/下中木棍。<br><strong>面包批注：</strong> 1.21 破盾核心。" },
                     { img: "img/sword.png", text: "<strong>剑 (Sword):</strong> <br>材料：2*材料 + 1*木棍。<br>清单：中上/正中材料，下中木棍。" },
                     { img: "img/bow.png", text: "<strong>弓 (Bow):</strong> <br>材料：3*木棍 + 3*线。" },
-                    { img: "img/crossbow.png", text: "<strong>弩 (Crossbow):</strong> <br>材料：3*木棍 + 2*线 + 1*铁锭 + 1*钩子。" },
+                    { img: "img/crossbow.png", text: "<strong>弩 (Crossbow):</strong> <br>材料：3*木棍 + 2*线 + 铁锭 + 1*钩子。" },
                     { img: "img/mace.png", text: "<strong>重锤 (Mace):</strong> <br>材料：1*沉重核心 + 1*旋风棒。" },
                     { img: "img/trident.png", text: "<strong>三叉戟 (Trident):</strong> <br>材料：不可合成。" }
                 ]
@@ -143,6 +143,7 @@
             "3.3 2x2活塞门": { 
                 category: "Level 3: Intermediate",
                 title: "2x2 标准内吸式活塞门",
+                color: "#FFD700",
                 steps: [{ 
                     img: "img/piston_door.png", 
                     text: `
@@ -160,15 +161,14 @@
             "4.1 3x3螺旋门": {
                 category: "Level 4: Advanced",
                 title: "3x3 螺旋开启式机械门",
+                color: "#00D4FF",
                 steps: [{ 
                     img: "img/Spiral_Door.png", 
                     text: `
                         <div style="border: 1px solid #00D4FF; background: rgba(0,212,255,0.1); padding: 15px; border-radius: 8px; margin-top: 10px;">
                             <p style="margin-bottom: 10px;"><strong>原理：</strong> 核心在于底部的<strong>二级抽离 (Double Piston Extender)</strong>。利用中继器时序，让中心方块在开门时被收回，关门时被推上。</p>
                             <strong>面包批注：</strong> 这是红石进阶的“成人礼”。时序延迟（Tick Delay）是成功的关键，稍有差错机器就会自毁！
-                            
                             <hr style="border-color: rgba(0,212,255,0.3); margin: 10px 0;">
-                            
                             <div style="text-align: center; padding: 10px;">
                                 <p style="font-size: 0.85em; color: #00D4FF; margin-bottom: 8px;">📁 3x3 机械核心投影已就绪</p>
                                 <a href="blueprints/3x3螺旋门4_1.litematic" download="3x3螺旋门4_1.litematic" 
@@ -185,6 +185,7 @@
             "2.2 甘蔗收割机": {
                 category: "Level 2: Factory",
                 title: "观察者式自动甘蔗机",
+                color: "#4CAF50",
                 steps: [{ 
                     img: "img/sugarcane_machine.png", 
                     text: `<div style="border: 1px solid #4CAF50; background: rgba(76,175,80,0.1); padding: 15px; border-radius: 8px; margin-top: 10px;">
@@ -192,8 +193,9 @@
                             <a href="blueprints/sugarcane_machine2_2.litematic" download style="display: inline-block; background: #4CAF50; color: #fff; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold; margin-top: 10px;">💾 下载 Litematic 图纸</a>
                         </div>` 
                 }]
-            };
-        
+            }
+        }; // FIXED: Added the missing closing brace and semicolon here!
+
         function openPage(category, subItems = null, customTitle = null) {
             const home = document.getElementById('home-page');
             const detail = document.getElementById('detail-page');
@@ -234,7 +236,11 @@
 
         function showTactical(data) {
             const overlay = document.getElementById('article-overlay');
-            document.getElementById('article-category').innerText = data.category;
+            const categoryEl = document.getElementById('article-category');
+            categoryEl.innerText = data.category;
+            // Apply custom color if it exists
+            categoryEl.style.color = data.color || '#f97316'; 
+
             document.getElementById('article-title').innerText = data.title;
             const container = document.getElementById('article-content');
             const isCrafting = data.title.includes("合成") || data.category.includes("Power");
@@ -287,6 +293,7 @@
     </script>
 </body>
 </html>
+
 
 
 
