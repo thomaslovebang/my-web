@@ -1,311 +1,637 @@
 <!DOCTYPE html>
+
 <html lang="zh-CN">
+
 <head>
+
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>eatenbread.com | 核心教学矩阵</title>
+
     <script src="https://cdn.tailwindcss.com"></script>
+
     <style>
+
         body, html {
+
             margin: 0; padding: 0; width: 100%; height: 100%;
+
             background: radial-gradient(circle, #fff3e0 0%, #ffcc80 60%, #ef6c00 100%);
+
             font-family: 'Segoe UI', system-ui, sans-serif;
+
             user-select: none;
+
         }
+
         .glass-card {
+
             background: rgba(255, 255, 255, 0.1);
+
             backdrop-filter: blur(10px);
+
             border: 1px solid rgba(255, 255, 255, 0.2);
+
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
         }
+
         .glass-card:hover {
+
             background: rgba(255, 255, 255, 0.25);
+
             transform: translateY(-5px);
+
             box-shadow: 0 15px 30px rgba(93, 64, 55, 0.1);
+
         }
+
         .page-fade { transition: opacity 0.4s ease, transform 0.4s ease; }
+
         .hidden-page { opacity: 0; pointer-events: none; transform: translateY(20px); display: none !important; }
+
         .bread-emoji { position: fixed; pointer-events: none; font-size: 40px; z-index: 200; transform: translate(-50%, -50%); }
+
         .hero-text { color: #5d4037; text-shadow: 2px 2px 0px rgba(255, 255, 255, 0.4); }
+
         .sub-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; width: 100%; }
+
         
+
         .tutorial-step {
+
             display: flex; gap: 2rem; align-items: center;
+
             padding: 2.5rem 0; border-bottom: 1px solid rgba(255,255,255,0.05);
+
         }
+
         @media (max-width: 768px) {
+
             .tutorial-step { flex-direction: column; text-align: center; }
+
             .step-img { width: 100% !important; }
+
         }
+
         .no-scrollbar::-webkit-scrollbar { display: none; }
+
     </style>
+
 </head>
+
 <body class="overflow-x-hidden">
 
+
+
     <div id="home-page" class="page-fade">
+
         <header class="pt-20 pb-10 text-center">
+
             <h1 class="text-6xl font-black hero-text mb-4 tracking-tighter uppercase">eatenbread.com</h1>
+
         </header>
+
         <main class="container mx-auto px-6 max-w-6xl">
+
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 text-center">
+
                 <div class="glass-card p-8 rounded-3xl cursor-pointer" onclick="openPage('survival')">
+
                     <div class="text-4xl mb-4">🗺️</div><h3 class="text-2xl font-bold text-stone-800">生存指南</h3>
+
                 </div>
+
                 <div class="glass-card p-8 rounded-3xl cursor-pointer" onclick="openPage('pvp')">
+
                     <div class="text-4xl mb-4">⚔️</div><h3 class="text-2xl font-bold text-stone-800">面包武道馆</h3>
+
                 </div>
+
                 <div class="glass-card p-8 rounded-3xl cursor-pointer" onclick="openPage('redstone')">
+
                     <div class="text-4xl mb-4">⚙️</div><h3 class="text-2xl font-bold text-stone-800">红石实验室</h3>
+
                 </div>
+
                 <div class="glass-card p-8 rounded-3xl cursor-pointer" onclick="openPage('art')">
+
                     <div class="text-4xl mb-4">🎨</div><h3 class="text-2xl font-bold text-stone-800">黄金艺术馆</h3>
+
                 </div>
+
             </div>
+
         </main>
+
     </div>
+
+
 
     <div id="detail-page" class="page-fade hidden-page fixed inset-0 overflow-y-auto bg-transparent p-6 pt-24 no-scrollbar">
+
         <div class="container mx-auto max-w-6xl">
+
             <button onclick="backToHome(event)" class="fixed top-8 left-8 text-stone-700 hover:text-stone-900 font-black z-[110] bg-white/30 px-6 py-2 rounded-full backdrop-blur-md border border-white/20">← BACK</button>
+
             <div class="text-center mb-6"><h2 id="detail-title" class="text-5xl font-black text-stone-800 hero-text"></h2></div>
+
+            
+
             <div class="max-w-md mx-auto mb-12">
+
                 <input type="text" id="search-input" onkeyup="filterItems()" placeholder="🔍 搜索..." 
+
                 class="w-full px-6 py-3 rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-stone-800 placeholder-stone-700 focus:outline-none focus:ring-2 focus:ring-orange-400 transition-all shadow-lg">
+
             </div>
+
+
+
             <div id="sub-blocks-container" class="sub-grid pb-20"></div>
+
         </div>
+
     </div>
+
+
 
     <div id="article-overlay" class="page-fade hidden-page fixed inset-0 z-[150] bg-stone-950/95 backdrop-blur-2xl flex justify-center items-center">
+
         <div class="w-full max-w-5xl h-screen md:h-[90vh] glass-card overflow-hidden rounded-none md:rounded-[3rem] border border-white/10 flex flex-col shadow-2xl">
+
             <div class="p-8 border-b border-white/10 flex justify-between items-center bg-stone-900/50">
+
                 <div>
+
                     <span id="article-category" class="text-orange-500 font-mono text-xs tracking-widest uppercase mb-1 block underline underline-offset-4"></span>
+
                     <h2 id="article-title" class="text-3xl font-black text-white uppercase tracking-tight"></h2>
+
                 </div>
+
                 <button onclick="closeArticle()" class="text-stone-500 hover:text-white text-5xl transition-transform hover:rotate-90">×</button>
+
             </div>
+
             <div id="article-content" class="flex-grow overflow-y-auto p-8 md:p-12 space-y-2 no-scrollbar bg-stone-900/20"></div>
+
         </div>
+
     </div>
 
+
+
     <script>
+
         const contentData = {
+
             survival: { title: "板块一：生存指南", items: [{name:"1. 基础准备", subItems:["1.1 基础工具", "1.2 建筑材料"]}, "2. 饥饿值&血量", "3. 村民贸易", "4. 合理的“外挂”", "5. 下界&末地“通行证”", "6. 高级追求", "7. 全成就"] },
+
             pvp: { title: "板块二：面包武道馆", items: ["1. 合成配方", "2. 基础身法", "3. 武器博弈", "4. 防御保命", "5. 高级进阶"] },
+
             redstone: { 
+
                 title: "板块三：红石实验室", 
+
                 items: [
+
                     { name: "1. 能量起源", subItems: ["1.1 能量源头", "1.2 红石基础"] },
+
                     { name: "2. 自动工厂", subItems: ["2.1 自动刷石机", "2.2 半自动农场", "2.3 盾构机"] },
+
                     { name: "3. 红石大脑", subItems: ["3.1 甘蔗收割机", "3.2 物品分类机", "3.3 2x2活塞门"] },
+
                     { name: "4. 熟练于心", subItems: ["4.1 3x3螺旋门", "4.2 双向飞行器", "4.3 自动酿造台"] },
+
                     { name: "5. 扬帆起航", subItems: ["5.1 16色羊毛厂", "5.2 循环活塞库", "5.3 试炼密室刷怪塔"] },
+
                     { name: "💀 最终挑战", subItems: ["世吞 (World Eater)", "天基屠龙炮"] }
+
                 ] 
+
             },
+
             art: { 
+
                 title: "板块四：黄金艺术馆", 
+
                 items: [
+
                     { 
+
                         name: "1. 建筑美学 (Architectural Aesthetics)", 
+
                         subItems: [
+
                             { name: "绿色系 (Green Palette)", subItems: ["自然绿 (Natural)", "发光绿 (Luminous)"] },
+
                             { name: "蓝色系 (Blue Palette)", subItems: ["冰冷蓝 (Cold)", "深海蓝 (Deep Sea)", "灵魂蓝 (Soul)"] },
+
                             { name: "红色系 (Red Palette)", subItems: ["地狱红 (Nether)", "温暖红 (Warm)"] },
+
                             "中性色 (Neutrals)",
+
                             "调色盘基础理论 (Color Theory Basics)"
+
                         ] 
+
                     },
-                    "2. 创意材质包", "3. 交互美学", "4. 光影搭配"
+
+                    "2. 创意材质包", 
+
+                    "3. 交互美学", 
+
+                    "4. 光影搭配"
+
                 ] 
+
             }
+
         };
+
+
 
         const tacticalData = {
-            // PVP RECIPES (RESTORED)
+
             "1. 合成配方": {
+
                 category: "Weapon Crafting",
+
                 title: "武器库合成清单",
+
                 steps: [
+
                     { img: "img/axe.png", text: "<strong>斧 (Axe):</strong> <br>材料：3*材料 + 2*木棍。<br>清单：左上/中上/左中材料，中间/下中木棍。<br><strong>面包批注：</strong> 1.21 破盾核心。" },
+
                     { img: "img/sword.png", text: "<strong>剑 (Sword):</strong> <br>材料：2*材料 + 1*木棍。<br>清单：中上/正中材料，下中木棍。" },
+
                     { img: "img/bow.png", text: "<strong>弓 (Bow):</strong> <br>材料：3*木棍 + 3*线。" },
+
                     { img: "img/crossbow.png", text: "<strong>弩 (Crossbow):</strong> <br>材料：3*木棍 + 2*线 + 1*铁锭 + 1*钩子。" },
+
                     { img: "img/mace.png", text: "<strong>重锤 (Mace):</strong> <br>材料：1*沉重核心 + 1*旋风棒。" },
+
                     { img: "img/trident.png", text: "<strong>三叉戟 (Trident):</strong> <br>材料：不可合成。" }
+
                 ]
+
             },
-            // REDSTONE THEORY (RESTORED)
+
             "1.1 能量源头": {
+
                 category: "Redstone Power",
+
                 title: "核心能源合成清单",
+
                 steps: [
+
                     { img: "img/redstone_torch.png", text: "<strong>红石火把:</strong> 信号反转的核心（非门）。能向上方块传导强信号。" },
+
                     { img: "img/redstone_block.png", text: "<strong>红石块:</strong> 永恒的 15 级强信号源。" },
+
                     { img: "img/observer.png", text: "<strong>侦测器:</strong> 监视方块更新。只要面前有变化，就发出一帧脉冲。" },
+
                     { img: "img/target.png", text: "<strong>标靶:</strong> 只要被射中就会传输红石信号，远程武器练习的好帮手。" },
-                    { img: "img/comparator.png", text: "<strong>红石比较器:</strong> 监视方块更新或比较信号强度。" },
+
+                    { img: "img/comparator.png", text: "<strong>红石比较器:</strong> 监视方块更新。只要两个信号强度不一致就会发出信号。" },
+
                     { img: "img/repeater.png", text: "<strong>红石中继器:</strong> 在红石信号即将消失的时候，使用中继器连接即可恢复至15级！" },
-                    { img: "img/daylight_detector.png", text: "<strong>阳光探测器:</strong> 监视时间变化。" }
+
+                    { img: "img/daylight_detector.png", text: "<strong>阳光探测器:</strong> 监视时间变化，发出对应的红石强度。" }
+
                 ]
+
             },
+
             "1.2 红石基础": {
+
                 category: "Redstone Theory",
+
                 title: "红石能量基础知识",
+
                 steps: [
+
                     { img: "img/redstone_decay.png", text: "<strong>1. 15格衰减律:</strong> 信号随距离逐格递减。" },
+
                     { img: "img/redstone_invert.png", text: "<strong>2. 逻辑反转:</strong> 逻辑门的基础。" },
+
                     { img: "img/redstone_freq.png", text: "<strong>3. 高频红石:</strong> 利用侦测器的特性让两个侦测器互相发出信号达到此效果。" },
+
                     { img: "img/redstone_signal.png", text: "<strong>4. 单一性:</strong> 红石粉连接红石方块时，只有直接连接会传递红石信号。" }
+
                 ]
+
             },
-            // FARMS (RESTORED)
-            "2.1 自动刷石机": {
-                category: "Level 2: Factory",
-                title: "基于活塞推动的自动刷石机",
-                steps: [{ img: "img/stone_gen.png", text: "<strong>原理：</strong> 利用岩浆与水接触产生圆石，侦测器监测到方块后触发活塞推走。" }]
-            },
-            "2.2 半自动农场": {
-                category: "Level 2: Factory",
-                title: "水流控制式半自动农场",
-                steps: [{ img: "img/wheat_farm.png", text: "<strong>原理：</strong> 利用发射器控制水流冲刷作物，将掉落物汇聚到收集管线。" }]
-            },
-            "3.1 甘蔗收割机": {
-                category: "Level 3: Intermediate",
-                title: "观察者式自动甘蔗机",
-                steps: [{ 
-                    img: "img/sugarcane_machine.png", 
-                    text: `<div style="border: 1px solid #FFD700; background: rgba(255,215,0,0.1); padding: 15px; border-radius: 8px;">
-                            <p><strong>原理：</strong> 观察者监测到甘蔗长到3格高 -> 触发活塞切割。</p>
-                            <a href="blueprints/sugarcane_machine3_1.litematic" download style="display:inline-block; background:#FFD700; color:#000; padding:10px; border-radius:5px; font-weight:bold; margin-top:10px;">💾 下载 Litematic 图纸</a>
-                        </div>` 
-                }]
-            },
-            // DOORS & ADVANCED (RESTORED LINKS)
+
             "3.3 2x2活塞门": { 
+
                 category: "Level 3: Intermediate",
+
                 title: "2x2 标准内吸式活塞门",
+
                 steps: [{ 
+
                     img: "img/piston_door.png", 
-                    text: `<div style="border: 1px solid #FFD700; background: rgba(255,215,0,0.1); padding: 15px; border-radius: 8px;">
-                            <p><strong>原理：</strong> 实现门面与墙壁完全齐平。</p>
-                            <a href="blueprints/2x2活塞门3_3.litematic" download style="display:inline-block; background:#FFD700; color:#000; padding:10px; border-radius:5px; font-weight:bold;">💾 下载 Litematic 图纸</a>
-                        </div>` 
+
+                    text: `
+
+                        <div style="border: 1px solid #FFD700; background: rgba(255,215,0,0.1); padding: 15px; border-radius: 8px; margin-top: 10px;">
+
+                            <p style="margin-bottom: 10px;"><strong>原理：</strong> 这种“内吸式”设计利用了<strong>双向递归器</strong>原理，让门面与墙壁完全齐平，实现完美隐藏。</p>
+
+                            <strong>面包批注：</strong> 虽然名字写着2x2，但这是迈向3x3大门的基础逻辑。稳定的信号同步是关键！
+
+                            <hr style="border-color: rgba(255,215,0,0.3); margin: 10px 0;">
+
+                            <div style="text-align: center; padding: 10px;">
+
+                                <a href="blueprints/2x2活塞门3_3.litematic" download style="display: inline-block; background: #FFD700; color: #000; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold;">💾 下载 Litematic 图纸</a>
+
+                            </div>
+
+                        </div>
+
+                    ` 
+
                 }]
+
             },
+
             "4.1 3x3螺旋门": {
+
                 category: "Level 4: Advanced",
+
                 title: "3x3 螺旋开启式机械门",
+
                 steps: [{ 
+
                     img: "img/Spiral_Door.png", 
-                    text: `<div style="border: 1px solid #00D4FF; background: rgba(0,212,255,0.1); padding: 15px; border-radius: 8px;">
-                            <p><strong>原理：</strong> 核心在于底部的二级抽离 (Double Piston Extender)。</p>
-                            <a href="blueprints/3x3螺旋门4_1.litematic" download style="display:inline-block; background:#00D4FF; color:#000; padding:10px; border-radius:5px; font-weight:bold;">💾 下载 Litematic 图纸</a>
-                        </div>` 
+
+                    text: `
+
+                        <div style="border: 1px solid #00D4FF; background: rgba(0,212,255,0.1); padding: 15px; border-radius: 8px; margin-top: 10px;">
+
+                            <p style="margin-bottom: 10px;"><strong>原理：</strong> 核心在于底部的<strong>二级抽离 (Double Piston Extender)</strong>。利用中继器时序，让中心方块在开门时被收回，关门时被推上。</p>
+
+                            <strong>面包批注：</strong> 这是红石进阶的“成人礼”。时序延迟（Tick Delay）是成功的关键，稍有差错机器就会自毁！
+
+                            <hr style="border-color: rgba(0,212,255,0.3); margin: 10px 0;">
+
+                            <div style="text-align: center; padding: 10px;">
+
+                                <a href="blueprints/3x3螺旋门4_1.litematic" download style="display: inline-block; background: #00D4FF; color: #000; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold;">💾 下载 Litematic 图纸</a>
+
+                            </div>
+
+                        </div>
+
+                    ` 
+
                 }]
+
             },
-            // 1.21 ART (KEPT)
-            "自然绿 (Natural)": {
-                category: "1.21 Art",
-                title: "自然系：苔藓与荒废感",
-                steps: [{ img: "img/121_green.png", text: "<strong>组合：</strong> 苔藓块 + 泥砖 (Mud Bricks)。适合制作被遗忘的遗迹。" }]
+
+            "3.1 甘蔗收割机": {
+
+                category: "Level 3: Intermediate",
+
+                title: "观察者式自动甘蔗机",
+
+                steps: [{ 
+
+                    img: "img/sugarcane_machine.png", 
+
+                    text: `<div style="border: 1px solid #FFD700; background: rgba(255,215,0,0.1); padding: 15px; border-radius: 8px; margin-top: 10px;">
+
+                            <p><strong>原理：</strong> 观察者监测高度 -> 活塞切割。</p>
+
+                            <a href="blueprints/sugarcane_machine3_1.litematic" download style="display: inline-block; background: #FFD700; color: #000; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold; margin-top: 10px;">💾 下载 Litematic 图纸</a>
+
+                        </div>` 
+
+                }]
+
             },
-            "中性色 (Neutrals)": {
-                category: "1.21 Art",
-                title: "中性系：万能的凝灰岩",
-                steps: [{ img: "img/tuff_variants.png", text: "<strong>新方块：</strong> 抛光凝灰岩、凝灰岩砖。1.21 建筑的万能底色。" }]
+
+            "2.2 半自动农场": {
+
+                category: "Level 2: Factory",
+
+                title: "水流控制式半自动农场",
+
+                steps: [{ img: "img/wheat_farm.png", text: "利用发射器控制水流冲刷作物。" }]
+
             }
+
         };
 
+
+
         function openPage(category, subItems = null, customTitle = null) {
+
             const home = document.getElementById('home-page');
+
             const detail = document.getElementById('detail-page');
+
             const container = document.getElementById('sub-blocks-container');
+
             const searchInput = document.getElementById('search-input');
+
+            
+
             if(searchInput) searchInput.value = ''; 
 
-            let data = subItems ? { title: customTitle, items: subItems } : contentData[category];
+
+
+            let data;
+
+            if (subItems) {
+
+                data = { title: customTitle, items: subItems };
+
+            } else {
+
+                data = contentData[category];
+
+            }
+
+            
+
             container.innerHTML = '';
+
             document.getElementById('detail-title').innerText = data.title;
 
+        
+
             data.items.forEach(item => {
+
                 const block = document.createElement('div');
+
                 block.className = 'glass-card p-6 rounded-2xl text-center font-bold text-stone-700 hover:text-stone-900 cursor-pointer transition-all active:scale-95';
+
                 const itemName = typeof item === 'object' ? item.name : item;
+
                 block.innerText = itemName;
+
+                
+
                 block.onclick = (e) => {
+
                     e.stopPropagation();
+
                     if (typeof item === 'object' && item.subItems) {
+
                         openPage(null, item.subItems, item.name);
+
                     } else if (tacticalData[itemName]) {
+
                         showTactical(tacticalData[itemName]);
+
                     } else {
+
                         alert("【" + itemName + "】正在努力烤制中...");
+
                     }
+
                 };
+
                 container.appendChild(block);
+
             });
 
+        
+
             home.style.opacity = '0';
+
             setTimeout(() => { 
+
                 home.classList.add('hidden-page'); 
+
                 detail.classList.remove('hidden-page'); 
-                setTimeout(() => { detail.style.opacity = '1'; }, 50); 
+
+                setTimeout(() => { detail.style.opacity = '1'; detail.style.transform = 'translateY(0)'; }, 50); 
+
             }, 400);
+
         }
+
+
 
         function filterItems() {
+
             const input = document.getElementById('search-input').value.toLowerCase();
+
             const cards = document.getElementById('sub-blocks-container').getElementsByClassName('glass-card');
+
             for (let card of cards) {
+
                 card.style.display = card.innerText.toLowerCase().includes(input) ? "" : "none";
+
             }
+
         }
+
+
 
         function showTactical(data) {
+
             const overlay = document.getElementById('article-overlay');
-            document.getElementById('article-category').innerText = data.category;
+
+            const catEl = document.getElementById('article-category');
+
+            catEl.innerText = data.category;
+
+            catEl.style.color = data.color || "#f97316"; 
+
             document.getElementById('article-title').innerText = data.title;
+
             const container = document.getElementById('article-content');
-            container.innerHTML = data.steps.map(step => `
+
+            
+
+            container.innerHTML = data.steps.map((step, index) => `
+
                 <div class="tutorial-step">
-                    <div class="step-img w-full md:w-1/2 bg-black/40 rounded-3xl flex items-center justify-center aspect-video">
-                        <img src="${step.img}" class="p-4 object-contain" onerror="this.src='https://via.placeholder.com/400?text=Asset'">
+
+                    <div class="step-img w-full md:w-1/2 flex justify-center bg-black/40 rounded-3xl overflow-hidden aspect-video">
+
+                        <img src="${step.img}" class="h-full object-contain p-4 transition-transform hover:scale-110" onerror="this.src='https://via.placeholder.com/400?text=Missing+Image'">
+
                     </div>
-                    <div class="text-stone-300 text-xl leading-relaxed">${step.text}</div>
+
+                    <div class="flex-grow px-4 text-stone-300 leading-relaxed text-xl">${step.text}</div>
+
                 </div>
+
             `).join('');
+
             overlay.classList.remove('hidden-page');
+
             setTimeout(() => { overlay.style.opacity = '1'; }, 50);
+
         }
+
+
 
         function closeArticle() {
-            document.getElementById('article-overlay').style.opacity = '0';
-            setTimeout(() => { document.getElementById('article-overlay').classList.add('hidden-page'); }, 400);
+
+            const overlay = document.getElementById('article-overlay');
+
+            overlay.style.opacity = '0';
+
+            setTimeout(() => { overlay.classList.add('hidden-page'); }, 400);
+
         }
+
+
 
         function backToHome(e) {
+
             if(e) e.stopPropagation();
+
             const home = document.getElementById('home-page');
+
             const detail = document.getElementById('detail-page');
+
             detail.style.opacity = '0';
+
             setTimeout(() => { 
+
                 detail.classList.add('hidden-page'); 
+
                 home.classList.remove('hidden-page'); 
+
                 setTimeout(() => { home.style.opacity = '1'; }, 50); 
+
             }, 400);
+
         }
 
+
+
         const bt = ['🍞', '🥐', '🥖', '🥨', '🥯'];
+
         document.addEventListener('mousedown', (e) => {
+
             for (let i = 0; i < 6; i++) {
+
                 const el = document.createElement('div'); el.className = 'bread-emoji'; el.innerText = bt[Math.floor(Math.random()*bt.length)]; document.body.appendChild(el);
+
                 let px = e.clientX, py = e.clientY, cvx = (Math.random()-0.5)*15, cvy = (Math.random()-0.5)*15, op = 1;
+
                 function a() { px+=cvx; py+=cvy; cvy+=0.5; op-=0.02; el.style.left=px+'px'; el.style.top=py+'px'; el.style.opacity=op; if(op>0) requestAnimationFrame(a); else el.remove(); }
+
                 requestAnimationFrame(a);
+
             }
+
         });
+
     </script>
+
 </body>
+
 </html>
