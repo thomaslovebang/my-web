@@ -124,7 +124,7 @@
                     },
                     "2. 创意材质包", 
                     "3. 交互美学", 
-                    "4. 光影搭配"
+                    "4. 高级光影搭配"
                 ] 
             }
         };
@@ -238,6 +238,25 @@
                         ` 
                     }
                 ]
+            },
+            // --- NEW ART DATA ADDED BELOW ---
+            "自然绿 (Natural)": {
+                category: "Green Palette",
+                title: "自然绿色调表 (Natural Greens)",
+                color: "#4ADE80",
+                steps: [{ img: "img/moss_block.png", text: "<strong>苔藓块 (Moss):</strong> 亮度 0。有机建筑的核心，与云杉木是绝配。" }]
+            },
+            "发光绿 (Luminous)": {
+                category: "Green Palette",
+                title: "发光绿色调表 (Luminous Greens)",
+                color: "#4ADE80",
+                steps: [{ img: "img/shroomlight.png", text: "<strong>菌光体 (Shroomlight):</strong> 亮度 15。最自然的绿色强光源。" }]
+            },
+            "灵魂蓝 (Soul)": {
+                category: "Blue Palette",
+                title: "灵魂蓝色调表 (Soul Blue)",
+                color: "#38BDF8",
+                steps: [{ img: "img/soul_lantern.png", text: "<strong>灵魂灯笼:</strong> 亮度 10。独特的青蓝色火光，适合地府或神秘风格。" }]
             }
         };
 
@@ -247,7 +266,9 @@
             const container = document.getElementById('sub-blocks-container');
             
             // Reset search when opening a new level
-            document.getElementById('search-input').value = ''; 
+            // Note: Search input was removed in your last paste, adding check to avoid errors
+            const searchInput = document.getElementById('search-input');
+            if(searchInput) searchInput.value = ''; 
         
             // Find the right data: 
             // If subItems are passed, use them. Otherwise, look up the category.
@@ -357,5 +378,3 @@
     </script>
 </body>
 </html>
-
-
