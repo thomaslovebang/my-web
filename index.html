@@ -68,12 +68,10 @@
         <div class="container mx-auto max-w-6xl">
             <button onclick="backToHome(event)" class="fixed top-8 left-8 text-stone-700 hover:text-stone-900 font-black z-[110] bg-white/30 px-6 py-2 rounded-full backdrop-blur-md border border-white/20">← BACK</button>
             <div class="text-center mb-6"><h2 id="detail-title" class="text-5xl font-black text-stone-800 hero-text"></h2></div>
-            
             <div class="max-w-md mx-auto mb-12">
                 <input type="text" id="search-input" onkeyup="filterItems()" placeholder="🔍 搜索..." 
                 class="w-full px-6 py-3 rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-stone-800 placeholder-stone-700 focus:outline-none focus:ring-2 focus:ring-orange-400 transition-all shadow-lg">
             </div>
-
             <div id="sub-blocks-container" class="sub-grid pb-20"></div>
         </div>
     </div>
@@ -119,14 +117,13 @@
                             "调色盘基础理论 (Color Theory Basics)"
                         ] 
                     },
-                    "2. 创意材质包", 
-                    "3. 交互美学", 
-                    "4. 光影搭配"
+                    "2. 创意材质包", "3. 交互美学", "4. 光影搭配"
                 ] 
             }
         };
 
         const tacticalData = {
+            // PVP RECIPES (RESTORED)
             "1. 合成配方": {
                 category: "Weapon Crafting",
                 title: "武器库合成清单",
@@ -139,6 +136,7 @@
                     { img: "img/trident.png", text: "<strong>三叉戟 (Trident):</strong> <br>材料：不可合成。" }
                 ]
             },
+            // REDSTONE THEORY (RESTORED)
             "1.1 能量源头": {
                 category: "Redstone Power",
                 title: "核心能源合成清单",
@@ -147,9 +145,9 @@
                     { img: "img/redstone_block.png", text: "<strong>红石块:</strong> 永恒的 15 级强信号源。" },
                     { img: "img/observer.png", text: "<strong>侦测器:</strong> 监视方块更新。只要面前有变化，就发出一帧脉冲。" },
                     { img: "img/target.png", text: "<strong>标靶:</strong> 只要被射中就会传输红石信号，远程武器练习的好帮手。" },
-                    { img: "img/comparator.png", text: "<strong>红石比较器:</strong> 监视方块更新。只要两个信号强度不一致就会发出信号。" },
+                    { img: "img/comparator.png", text: "<strong>红石比较器:</strong> 监视方块更新或比较信号强度。" },
                     { img: "img/repeater.png", text: "<strong>红石中继器:</strong> 在红石信号即将消失的时候，使用中继器连接即可恢复至15级！" },
-                    { img: "img/daylight_detector.png", text: "<strong>阳光探测器:</strong> 监视时间变化，发出对应的红石强度。" }
+                    { img: "img/daylight_detector.png", text: "<strong>阳光探测器:</strong> 监视时间变化。" }
                 ]
             },
             "1.2 红石基础": {
@@ -162,21 +160,38 @@
                     { img: "img/redstone_signal.png", text: "<strong>4. 单一性:</strong> 红石粉连接红石方块时，只有直接连接会传递红石信号。" }
                 ]
             },
+            // FARMS (RESTORED)
+            "2.1 自动刷石机": {
+                category: "Level 2: Factory",
+                title: "基于活塞推动的自动刷石机",
+                steps: [{ img: "img/stone_gen.png", text: "<strong>原理：</strong> 利用岩浆与水接触产生圆石，侦测器监测到方块后触发活塞推走。" }]
+            },
+            "2.2 半自动农场": {
+                category: "Level 2: Factory",
+                title: "水流控制式半自动农场",
+                steps: [{ img: "img/wheat_farm.png", text: "<strong>原理：</strong> 利用发射器控制水流冲刷作物，将掉落物汇聚到收集管线。" }]
+            },
+            "3.1 甘蔗收割机": {
+                category: "Level 3: Intermediate",
+                title: "观察者式自动甘蔗机",
+                steps: [{ 
+                    img: "img/sugarcane_machine.png", 
+                    text: `<div style="border: 1px solid #FFD700; background: rgba(255,215,0,0.1); padding: 15px; border-radius: 8px;">
+                            <p><strong>原理：</strong> 观察者监测到甘蔗长到3格高 -> 触发活塞切割。</p>
+                            <a href="blueprints/sugarcane_machine3_1.litematic" download style="display:inline-block; background:#FFD700; color:#000; padding:10px; border-radius:5px; font-weight:bold; margin-top:10px;">💾 下载 Litematic 图纸</a>
+                        </div>` 
+                }]
+            },
+            // DOORS & ADVANCED (RESTORED LINKS)
             "3.3 2x2活塞门": { 
                 category: "Level 3: Intermediate",
                 title: "2x2 标准内吸式活塞门",
                 steps: [{ 
                     img: "img/piston_door.png", 
-                    text: `
-                        <div style="border: 1px solid #FFD700; background: rgba(255,215,0,0.1); padding: 15px; border-radius: 8px; margin-top: 10px;">
-                            <p style="margin-bottom: 10px;"><strong>原理：</strong> 这种“内吸式”设计利用了<strong>双向递归器</strong>原理，让门面与墙壁完全齐平，实现完美隐藏。</p>
-                            <strong>面包批注：</strong> 虽然名字写着2x2，但这是迈向3x3大门的基础逻辑。稳定的信号同步是关键！
-                            <hr style="border-color: rgba(255,215,0,0.3); margin: 10px 0;">
-                            <div style="text-align: center; padding: 10px;">
-                                <a href="blueprints/2x2活塞门3_3.litematic" download style="display: inline-block; background: #FFD700; color: #000; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold;">💾 下载 Litematic 图纸</a>
-                            </div>
-                        </div>
-                    ` 
+                    text: `<div style="border: 1px solid #FFD700; background: rgba(255,215,0,0.1); padding: 15px; border-radius: 8px;">
+                            <p><strong>原理：</strong> 实现门面与墙壁完全齐平。</p>
+                            <a href="blueprints/2x2活塞门3_3.litematic" download style="display:inline-block; background:#FFD700; color:#000; padding:10px; border-radius:5px; font-weight:bold;">💾 下载 Litematic 图纸</a>
+                        </div>` 
                 }]
             },
             "4.1 3x3螺旋门": {
@@ -184,33 +199,22 @@
                 title: "3x3 螺旋开启式机械门",
                 steps: [{ 
                     img: "img/Spiral_Door.png", 
-                    text: `
-                        <div style="border: 1px solid #00D4FF; background: rgba(0,212,255,0.1); padding: 15px; border-radius: 8px; margin-top: 10px;">
-                            <p style="margin-bottom: 10px;"><strong>原理：</strong> 核心在于底部的<strong>二级抽离 (Double Piston Extender)</strong>。利用中继器时序，让中心方块在开门时被收回，关门时被推上。</p>
-                            <strong>面包批注：</strong> 这是红石进阶的“成人礼”。时序延迟（Tick Delay）是成功的关键，稍有差错机器就会自毁！
-                            <hr style="border-color: rgba(0,212,255,0.3); margin: 10px 0;">
-                            <div style="text-align: center; padding: 10px;">
-                                <a href="blueprints/3x3螺旋门4_1.litematic" download style="display: inline-block; background: #00D4FF; color: #000; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold;">💾 下载 Litematic 图纸</a>
-                            </div>
-                        </div>
-                    ` 
-                }]
-            },
-            "3.1 甘蔗收割机": {
-                category: "Level 3: Intermediate",
-                title: "观察者式自动甘蔗机",
-                steps: [{ 
-                    img: "img/sugarcane_machine.png", 
-                    text: `<div style="border: 1px solid #FFD700; background: rgba(255,215,0,0.1); padding: 15px; border-radius: 8px; margin-top: 10px;">
-                            <p><strong>原理：</strong> 观察者监测高度 -> 活塞切割。</p>
-                            <a href="blueprints/sugarcane_machine3_1.litematic" download style="display: inline-block; background: #FFD700; color: #000; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold; margin-top: 10px;">💾 下载 Litematic 图纸</a>
+                    text: `<div style="border: 1px solid #00D4FF; background: rgba(0,212,255,0.1); padding: 15px; border-radius: 8px;">
+                            <p><strong>原理：</strong> 核心在于底部的二级抽离 (Double Piston Extender)。</p>
+                            <a href="blueprints/3x3螺旋门4_1.litematic" download style="display:inline-block; background:#00D4FF; color:#000; padding:10px; border-radius:5px; font-weight:bold;">💾 下载 Litematic 图纸</a>
                         </div>` 
                 }]
             },
-            "2.2 半自动农场": {
-                category: "Level 2: Factory",
-                title: "水流控制式半自动农场",
-                steps: [{ img: "img/wheat_farm.png", text: "利用发射器控制水流冲刷作物。" }]
+            // 1.21 ART (KEPT)
+            "自然绿 (Natural)": {
+                category: "1.21 Art",
+                title: "自然系：苔藓与荒废感",
+                steps: [{ img: "img/121_green.png", text: "<strong>组合：</strong> 苔藓块 + 泥砖 (Mud Bricks)。适合制作被遗忘的遗迹。" }]
+            },
+            "中性色 (Neutrals)": {
+                category: "1.21 Art",
+                title: "中性系：万能的凝灰岩",
+                steps: [{ img: "img/tuff_variants.png", text: "<strong>新方块：</strong> 抛光凝灰岩、凝灰岩砖。1.21 建筑的万能底色。" }]
             }
         };
 
@@ -219,25 +223,17 @@
             const detail = document.getElementById('detail-page');
             const container = document.getElementById('sub-blocks-container');
             const searchInput = document.getElementById('search-input');
-            
             if(searchInput) searchInput.value = ''; 
 
-            let data;
-            if (subItems) {
-                data = { title: customTitle, items: subItems };
-            } else {
-                data = contentData[category];
-            }
-            
+            let data = subItems ? { title: customTitle, items: subItems } : contentData[category];
             container.innerHTML = '';
             document.getElementById('detail-title').innerText = data.title;
-        
+
             data.items.forEach(item => {
                 const block = document.createElement('div');
                 block.className = 'glass-card p-6 rounded-2xl text-center font-bold text-stone-700 hover:text-stone-900 cursor-pointer transition-all active:scale-95';
                 const itemName = typeof item === 'object' ? item.name : item;
                 block.innerText = itemName;
-                
                 block.onclick = (e) => {
                     e.stopPropagation();
                     if (typeof item === 'object' && item.subItems) {
@@ -250,12 +246,12 @@
                 };
                 container.appendChild(block);
             });
-        
+
             home.style.opacity = '0';
             setTimeout(() => { 
                 home.classList.add('hidden-page'); 
                 detail.classList.remove('hidden-page'); 
-                setTimeout(() => { detail.style.opacity = '1'; detail.style.transform = 'translateY(0)'; }, 50); 
+                setTimeout(() => { detail.style.opacity = '1'; }, 50); 
             }, 400);
         }
 
@@ -269,18 +265,15 @@
 
         function showTactical(data) {
             const overlay = document.getElementById('article-overlay');
-            const catEl = document.getElementById('article-category');
-            catEl.innerText = data.category;
-            catEl.style.color = data.color || "#f97316"; 
+            document.getElementById('article-category').innerText = data.category;
             document.getElementById('article-title').innerText = data.title;
             const container = document.getElementById('article-content');
-            
-            container.innerHTML = data.steps.map((step, index) => `
+            container.innerHTML = data.steps.map(step => `
                 <div class="tutorial-step">
-                    <div class="step-img w-full md:w-1/2 flex justify-center bg-black/40 rounded-3xl overflow-hidden aspect-video">
-                        <img src="${step.img}" class="h-full object-contain p-4 transition-transform hover:scale-110" onerror="this.src='https://via.placeholder.com/400?text=Missing+Image'">
+                    <div class="step-img w-full md:w-1/2 bg-black/40 rounded-3xl flex items-center justify-center aspect-video">
+                        <img src="${step.img}" class="p-4 object-contain" onerror="this.src='https://via.placeholder.com/400?text=Asset'">
                     </div>
-                    <div class="flex-grow px-4 text-stone-300 leading-relaxed text-xl">${step.text}</div>
+                    <div class="text-stone-300 text-xl leading-relaxed">${step.text}</div>
                 </div>
             `).join('');
             overlay.classList.remove('hidden-page');
@@ -288,9 +281,8 @@
         }
 
         function closeArticle() {
-            const overlay = document.getElementById('article-overlay');
-            overlay.style.opacity = '0';
-            setTimeout(() => { overlay.classList.add('hidden-page'); }, 400);
+            document.getElementById('article-overlay').style.opacity = '0';
+            setTimeout(() => { document.getElementById('article-overlay').classList.add('hidden-page'); }, 400);
         }
 
         function backToHome(e) {
