@@ -245,29 +245,49 @@
             const home = document.getElementById('home-page');
             const detail = document.getElementById('detail-page');
             const container = document.getElementById('sub-blocks-container');
-            const data = subItems ? { title: customTitle, items: subItems } : contentData[category];
+            
+            // Reset search when opening a new level
+            document.getElementById('search-input').value = ''; 
+        
+            // Find the right data: 
+            // If subItems are passed, use them. Otherwise, look up the category.
+            let data;
+            if (subItems) {
+                data = { title: customTitle, items: subItems };
+            } else {
+                data = contentData[category];
+            }
             
             container.innerHTML = '';
             document.getElementById('detail-title').innerText = data.title;
-
+        
             data.items.forEach(item => {
                 const block = document.createElement('div');
                 block.className = 'glass-card p-6 rounded-2xl text-center font-bold text-stone-700 hover:text-stone-900 cursor-pointer transition-all active:scale-95';
+                
+                // Handle both string items and object items with sub-menus
                 const itemName = typeof item === 'object' ? item.name : item;
                 block.innerText = itemName;
+                
                 block.onclick = (e) => {
                     e.stopPropagation();
-                    if (typeof item === 'object') {
+                    // 1. If it has sub-items, go deeper (Level 2, Level 3, etc.)
+                    if (typeof item === 'object' && item.subItems) {
                         openPage(null, item.subItems, item.name);
-                    } else if (tacticalData[itemName]) {
+                    } 
+                    // 2. If it is a final leaf with tactical data, show the article
+                    else if (tacticalData[itemName]) {
                         showTactical(tacticalData[itemName]);
-                    } else {
+                    } 
+                    // 3. Otherwise, it's still "baking"
+                    else {
                         alert("【" + itemName + "】正在努力烤制中...");
                     }
                 };
                 container.appendChild(block);
             });
-
+        
+            // Transition Logic
             home.style.opacity = '0';
             setTimeout(() => { 
                 home.classList.add('hidden-page'); 
@@ -337,4 +357,5 @@
     </script>
 </body>
 </html>
+
 
