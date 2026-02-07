@@ -145,6 +145,22 @@
                     { img: "img/redstone_signal.png", text: "<strong>4. 单一性:</strong> 红石粉连接红石方块时，只有直接连接会传递红石信号。" }
                 ]
             },
+            "4.2 垂直飞行器": { // 这里你可以根据实际情况改名为 "垂直飞行器"
+                category: "Level 4: Flying Machines",
+                title: "单向垂直升降引擎",
+                steps: [{ 
+                    img: "img/vertical_flyer.png", 
+                    text: `<div style="border: 1px solid #00D4FF; background: rgba(0,212,255,0.1); padding: 15px; border-radius: 8px;">
+                            <p><strong>原理分析：</strong> 这种设计利用了<strong>观察者面朝下</strong>捕捉下方的更新。当底部被点火或更新时，观察者激活顶部的<strong>粘性活塞</strong>，将整个机身（连带粘性块和下方的普通活塞）向上拉动。随后下方活塞跟进，完成一次循环。</p>
+                            <strong>面包批注：</strong> 
+                            1. 因为是单向的，所以它非常适合做<strong>全自动电梯</strong>或顶层轰炸机的上升部分。<br>
+                            2. <strong>注意：</strong> 顶端一定要有“不可移动方块”（如黑曜石或熔炉）挡住，否则它会一直飞到高度上限（256/320层）把自己卡死！
+                            <div style="text-align: center; margin-top: 10px;">
+                                <a href="blueprints/vertical_flyer4_2.litematic" download style="display: inline-block; background: #00D4FF; color: #000; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold;">💾 下载 Litematic 图纸</a>
+                            </div>
+                        </div>` 
+                }]
+            },
             "2.2 半自动农场": {
                 category: "Level 2: Factory",
                 title: "大规模水流式半自动农场",
@@ -271,5 +287,6 @@
     </script>
 </body>
 </html>
+
 
 
