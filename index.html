@@ -275,7 +275,7 @@
             setTimeout(() => { detail.classList.add('hidden-page'); home.classList.remove('hidden-page'); setTimeout(() => { home.style.opacity = '1'; }, 50); }, 400);
         }
 
-        const bt = ['🍞', '🥐', '🥖', '🥨', '🥯'];
+        const bt = ['🍞', '🥐', '🥖', '🥨', '🥯', '🧸'];
         document.addEventListener('mousedown', (e) => {
             for (let i = 0; i < 6; i++) {
                 const el = document.createElement('div'); el.className = 'bread-emoji'; el.innerText = bt[Math.floor(Math.random()*bt.length)]; document.body.appendChild(el);
@@ -287,6 +287,7 @@
     </script>
 </body>
 </html>
+
 
 
 
