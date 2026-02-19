@@ -145,22 +145,6 @@
                     { img: "img/redstone_signal.png", text: "<strong>4. 单一性:</strong> 红石粉连接红石方块时，只有直接连接会传递红石信号。" }
                 ]
             },
-            "4.2 垂直飞行器": { // 这里你可以根据实际情况改名为 "垂直飞行器"
-                category: "Level 4: Flying Machines",
-                title: "单向垂直升降引擎",
-                steps: [{ 
-                    img: "img/vertical_flyer.png", 
-                    text: `<div style="border: 1px solid #00D4FF; background: rgba(0,212,255,0.1); padding: 15px; border-radius: 8px;">
-                            <p><strong>原理分析：</strong> 这种设计利用了<strong>观察者面朝下</strong>捕捉下方的更新。当底部被点火或更新时，观察者激活顶部的<strong>粘性活塞</strong>，将整个机身（连带粘性块和下方的普通活塞）向上拉动。随后下方活塞跟进，完成一次循环。</p>
-                            <strong>面包批注：</strong> 
-                            1. 因为是单向的，所以它非常适合做<strong>全自动电梯</strong>或顶层轰炸机的上升部分。<br>
-                            2. <strong>注意：</strong> 顶端一定要有“不可移动方块”（如黑曜石或熔炉）挡住，否则它会一直飞到高度上限（256/320层）把自己卡死（注意，搭建完成后要在正中间点火）！（图片仅展示结构逻辑，具体样子玩家可自行修改。如有不符，以文字为准）
-                            <div style="text-align: center; margin-top: 10px;">
-                                <a href="blueprints/vertical_flyer4_2.litematic" download style="display: inline-block; background: #00D4FF; color: #000; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold;">💾 下载 Litematic 图纸</a>
-                            </div>
-                        </div>` 
-                }]
-            },
             "2.2 半自动农场": {
                 category: "Level 2: Factory",
                 title: "大规模水流式半自动农场",
@@ -172,7 +156,8 @@
                             <p style="margin-bottom: 10px;"><strong>原理深度解析：</strong> 本系统利用发射器（Dispenser）内置水桶，在接收到红石脉冲后瞬间释放水流。水流通过流体更新算法，将成熟作物从耕地上“震落”变为掉落物实体。随后，利用水流的推进力将散落的资源统一冲刷至底部的收集槽（漏斗链），实现一键收割。</p>
                             <strong>面包批注：</strong> 
                             1. 这是生存初期的“财富密码”，建议配合简单的时钟电路（Clock Circuit）实现收割后自动关水。<br>
-                            2. <strong>避坑指南：</strong> 务必在水流路径上方覆盖玻璃或其他透明方块，防止作物在冲刷过程中因物理碰撞飞溅到耕地之外，造成资源浪费。（图片仅展示结构逻辑，具体样子玩家可自行修改。如有不符，以文字为准）
+                            2. <strong>避坑指南：</strong> 务必在水流路径上方覆盖玻璃或其他透明方块，防止作物在冲刷过程中因物理碰撞飞溅到耕地之外，造成资源浪费。<br>
+                            <span style="color: #9ca3af; font-size: 0.9em;">（图片仅展示结构逻辑，具体样子玩家可自行修改。如有不符，以文字为准）</span>
                             <hr style="border-color: rgba(74,222,128,0.3); margin: 10px 0;">
                             <div style="text-align: center;">
                                 <a href="blueprints/半自动农场2_2.litematic" download style="display: inline-block; background: #4ade80; color: #000; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold;">💾 下载 Litematic 图纸</a>
@@ -192,7 +177,8 @@
                             <p style="margin-bottom: 10px;"><strong>原理深度解析：</strong> 该机器巧妙利用了“音符盒（Note Block）”被点击时产生的瞬时状态更新。侦测器（Observer）捕捉到这种更新后，立即激活推进活塞组。通过活塞间的逻辑时序，带动前端的TNT复制机构进行水平位移，从而达到“手动点击一次，机器前进一格”的精准受控效果。</p>
                             <strong>面包批注：</strong> 
                             1. 比起全自动盾构机，受控式更适合处理复杂地层。遇到水坑、岩浆或者坚硬的黑曜石时，你能立刻收手避免机器“毁尸灭迹”。<br>
-                            2. <strong>致命提醒：</strong> 启动前必须观察前方至少5格内是否有流水。一旦TNT在水中引爆，不但没法炸开方块，还会因为爆炸力无法宣泄导致TNT回弹，直接把你的心血炸成碎片！（图片仅展示结构逻辑，具体样子玩家可自行修改。如有不符，以文字为准）
+                            2. <strong>致命提醒：</strong> 启动前必须观察前方至少5格内是否有流水。一旦TNT在水中引爆，不但没法炸开方块，还会因为爆炸力无法宣泄导致TNT回弹，直接把你的心血炸成碎片！<br>
+                            <span style="color: #9ca3af; font-size: 0.9em;">（图片仅展示结构逻辑，具体样子玩家可自行修改。如有不符，以文字为准）</span>
                             <hr style="border-color: rgba(74,222,128,0.3); margin: 10px 0;">
                             <div style="text-align: center;">
                                 <a href="blueprints/盾构机2_3.litematic" download style="display: inline-block; background: #4ade80; color: #000; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold;">💾 下载 Litematic 图纸</a>
@@ -212,7 +198,8 @@
                             <p style="margin-bottom: 10px;"><strong>原理深度解析：</strong> 本装置基于“非接触式高度监测”逻辑。当甘蔗生长至三格高度时，位于顶层的侦测器会瞬间识别到方块更新。信号穿过支撑方块激活中间层的普通活塞，将甘蔗的第二层及以上部分推断。由于甘蔗底座未被破坏，它会继续循环生长，形成永动机制。</p>
                             <strong>面包批注：</strong> 
                             1. 这是火箭燃料（纸）和图书馆建设的核心来源，建议采取“多模块并联”排布。一排20个模块，挂机一会儿就能收一箱子。<br>
-                            2. <strong>进阶技巧：</strong> 在甘蔗根部下方使用“漏斗矿车”进行全局收集，效率远高于普通漏斗，能有效捕捉所有掉落的甘蔗。（图片仅展示结构逻辑，具体样子玩家可自行修改。如有不符，以文字为准）
+                            2. <strong>进阶技巧：</strong> 在甘蔗根部下方使用“漏斗矿车”进行全局收集，效率远高于普通漏斗，能有效捕捉所有掉落的甘蔗。<br>
+                            <span style="color: #9ca3af; font-size: 0.9em;">（图片仅展示结构逻辑，具体样子玩家可自行修改。如有不符，以文字为准）</span>
                             <hr style="border-color: rgba(255,215,0,0.3); margin: 10px 0;">
                             <div style="text-align: center;">
                                 <a href="blueprints/sugarcane_machine3_1.litematic" download style="display: inline-block; background: #FFD700; color: #000; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold;">💾 下载 Litematic 图纸</a>
@@ -232,9 +219,12 @@
                             <p style="margin-bottom: 10px;"><strong>原理深度解析：</strong> 经典的“内吸式（Jeb Door）”结构。它通过两组粘性活塞的复合联动实现：第一组活塞负责将门面方块向内拉动，第二组活塞则负责将门面整体向两侧侧移。利用中继器（Repeater）调节关闭时的延时，可以实现门面开启后与墙体完美齐平，不留任何机械痕迹。</p>
                             <strong>面包批注：</strong> 
                             1. 这是红石美学的入门之作。不仅可以装在基地入口，还可以藏在图书馆的书架后面做暗室。<br>
-                            2. <strong>技术重点：</strong> 注意布线的对称性。如果两侧开启时间不统一，视觉上会非常别扭。（图片仅展示结构逻辑，具体样子玩家可自行修改。如有不符，以文字为准）
+                            2. <strong>技术重点：</strong> 注意布线的对称性。如果两侧开启时间不统一，视觉上会非常别扭。<br>
+                            <span style="color: #9ca3af; font-size: 0.9em;">（图片仅展示结构逻辑，具体样子玩家可自行修改。如有不符，以文字为准）</span>
                             <hr style="border-color: rgba(255,215,0,0.3); margin: 10px 0;">
-                            <a href="blueprints/2x2活塞门3_3.litematic" download style="display: inline-block; background: #FFD700; color: #000; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold;">💾 下载 Litematic 图纸</a>
+                            <div style="text-align: center;">
+                                <a href="blueprints/2x2活塞门3_3.litematic" download style="display: inline-block; background: #FFD700; color: #000; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold;">💾 下载 Litematic 图纸</a>
+                            </div>
                         </div>
                     ` 
                 }]
@@ -250,15 +240,37 @@
                             <p style="margin-bottom: 10px;"><strong>原理深度解析：</strong> 这是中高级红石的敲门砖。由于3x3正中心那个方块没有任何侧面墙壁支撑活塞，必须利用底部的“二级递归（Double Piston Extender）”结构。通过及其精确的中继器刻数控制，在门开启时先收回外层，再瞬间伸缩收回中心方块。四周方块则按照螺旋顺序依次收回，视觉极度舒适。</p>
                             <strong>面包批注：</strong> 
                             1. 这种门的结构复杂且极其吃时序。稍微手抖调错一个中继器的档位，整个门就会因为方块没收回而卡死自毁。<br>
-                            2. <strong>建议：</strong> 初次搭建一定要开着 Litematic 的投影模式对照，尤其是底部的逻辑电路部分。（图片仅展示结构逻辑，具体样子玩家可自行修改。如有不符，以文字为准）
+                            2. <strong>建议：</strong> 初次搭建一定要开着 Litematic 的投影模式对照，尤其是底部的逻辑电路部分。<br>
+                            <span style="color: #9ca3af; font-size: 0.9em;">（图片仅展示结构逻辑，具体样子玩家可自行修改。如有不符，以文字为准）</span>
                             <hr style="border-color: rgba(255,215,0,0.3); margin: 10px 0;">
-                            <a href="blueprints/3x3螺旋门4_1.litematic" download style="display: inline-block; background: #00D4FF; color: #000; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold;">💾 下载 Litematic 图纸</a>
+                            <div style="text-align: center;">
+                                <a href="blueprints/3x3螺旋门4_1.litematic" download style="display: inline-block; background: #00D4FF; color: #000; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold;">💾 下载 Litematic 图纸</a>
+                            </div>
                         </div>
                     ` 
                 }]
-            }
+            },
+            "4.2 垂直飞行器": {
+                category: "Level 4: Flying Machines",
+                title: "单向垂直升降引擎",
+                color: "#00D4FF",
+                steps: [{ 
+                    img: "img/vertical_flyer.png", 
+                    text: `
+                        <div style="border: 1px solid #00D4FF; background: rgba(0,212,255,0.1); padding: 15px; border-radius: 8px;">
+                            <p><strong>原理分析：</strong> 这种设计利用了<strong>观察者面朝下</strong>捕捉下方的更新。当底部被点火或更新时，观察者激活顶部的<strong>粘性活塞</strong>，将整个机身（连带粘性块和下方的普通活塞）向上拉动。随后下方活塞跟进，完成一次循环。</p>
+                            <strong>面包批注：</strong> 
+                            1. 因为是单向的，所以它非常适合做<strong>全自动电梯</strong>或顶层轰炸机的上升部分。<br>
+                            2. <strong>注意：</strong> 顶端一定要有“不可移动方块”（如黑曜石或熔炉）挡住，否则它会一直飞到高度上限把自己卡死（注意，搭建完成后要在正中间点火）！<br>
+                            <span style="color: #9ca3af; font-size: 0.9em;">（图片仅展示结构逻辑，具体样子玩家可自行修改。如有不符，以文字为准）</span>
+                            <div style="text-align: center; margin-top: 10px;">
+                                <a href="blueprints/vertical_flyer4_2.litematic" download style="display: inline-block; background: #00D4FF; color: #000; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold;">💾 下载 Litematic 图纸</a>
+                            </div>
+                        </div>
+                    ` 
+                }]
+            },
         };
-
         function openPage(category, subItems = null, customTitle = null) {
             const home = document.getElementById('home-page');
             const detail = document.getElementById('detail-page');
@@ -326,6 +338,7 @@
     </script>
 </body>
 </html>
+
 
 
 
