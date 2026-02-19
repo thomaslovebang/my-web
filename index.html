@@ -169,53 +169,71 @@
                     img: "img/wheat_farm.png", 
                     text: `
                         <div style="border: 1px solid #4ade80; background: rgba(74,222,128,0.1); padding: 15px; border-radius: 8px;">
-                            <p style="margin-bottom: 10px;"><strong>原理：</strong> 利用发射器控制水流冲刷成熟作物。水流可以瞬间将耕地上的作物转化为掉落物，并汇集到漏斗中。</p>
-                            <strong>面包批注：</strong> 生存初期的“财富密码”。记得在水流上方放方块防止作物飞溅，保持高效率收集！
+                            <p style="margin-bottom: 10px;"><strong>原理深度解析：</strong> 本系统利用发射器（Dispenser）内置水桶，在接收到红石脉冲后瞬间释放水流。水流通过流体更新算法，将成熟作物从耕地上“震落”变为掉落物实体。随后，利用水流的推进力将散落的资源统一冲刷至底部的收集槽（漏斗链），实现一键收割。</p>
+                            <strong>面包批注：</strong> 
+                            1. 这是生存初期的“财富密码”，建议配合简单的时钟电路（Clock Circuit）实现收割后自动关水。<br>
+                            2. <strong>避坑指南：</strong> 务必在水流路径上方覆盖玻璃或其他透明方块，防止作物在冲刷过程中因物理碰撞飞溅到耕地之外，造成资源浪费。
                             <hr style="border-color: rgba(74,222,128,0.3); margin: 10px 0;">
-                            <a href="blueprints/半自动农场2_2.litematic" download style="display: inline-block; background: #4ade80; color: #000; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold;">💾 下载 Litematic 图纸</a>
+                            <div style="text-align: center;">
+                                <a href="blueprints/半自动农场2_2.litematic" download style="display: inline-block; background: #4ade80; color: #000; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold;">💾 下载 Litematic 图纸</a>
+                            </div>
                         </div>
                     ` 
                 }]
             },
             "2.3 盾构机": {
                 category: "Level 2: Factory",
-                title: "音符盒盾构机",
+                title: "音符盒受控式盾构机",
                 color: "#4ade80",
                 steps: [{ 
                     img: "img/dungouji.png", 
                     text: `
                         <div style="border: 1px solid #4ade80; background: rgba(74,222,128,0.1); padding: 15px; border-radius: 8px;">
-                            <p style="margin-bottom: 10px;"><strong>原理：</strong> 利用侦测器检查音符盒的状态更新，就可以达到“每次向前，随叫随到”的效果</p>
-                            <strong>面包批注：</strong> 生存必备的挖矿帮手。记得在遇到水的时候手动清理防止失效。尽量留出足够空间避免炸膛，保持高效率收集！
+                            <p style="margin-bottom: 10px;"><strong>原理深度解析：</strong> 该机器巧妙利用了“音符盒（Note Block）”被点击时产生的瞬时状态更新。侦测器（Observer）捕捉到这种更新后，立即激活推进活塞组。通过活塞间的逻辑时序，带动前端的TNT复制机构进行水平位移，从而达到“手动点击一次，机器前进一格”的精准受控效果。</p>
+                            <strong>面包批注：</strong> 
+                            1. 比起全自动盾构机，受控式更适合处理复杂地层。遇到水坑、岩浆或者坚硬的黑曜石时，你能立刻收手避免机器“毁尸灭迹”。<br>
+                            2. <strong>致命提醒：</strong> 启动前必须观察前方至少5格内是否有流水。一旦TNT在水中引爆，不但没法炸开方块，还会因为爆炸力无法宣泄导致TNT回弹，直接把你的心血炸成碎片！
                             <hr style="border-color: rgba(74,222,128,0.3); margin: 10px 0;">
-                            <a href="blueprints/盾构机2_3.litematic" download style="display: inline-block; background: #4ade80; color: #000; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold;">💾 下载 Litematic 图纸</a>
+                            <div style="text-align: center;">
+                                <a href="blueprints/盾构机2_3.litematic" download style="display: inline-block; background: #4ade80; color: #000; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold;">💾 下载 Litematic 图纸</a>
+                            </div>
                         </div>
                     ` 
                 }]
             },
             "3.1 甘蔗收割机": {
                 category: "Level 3: Intermediate",
-                title: "观察者式自动甘蔗收割机",
+                title: "观察者式全自动甘蔗收割机",
+                color: "#FFD700",
                 steps: [{ 
                     img: "img/sugarcane_machine.png", 
                     text: `
                         <div style="border: 1px solid #FFD700; background: rgba(255,215,0,0.1); padding: 15px; border-radius: 8px;">
-                            <p style="margin-bottom: 10px;"><strong>原理：</strong> 利用观察者监测甘蔗高度，当甘蔗长到3格高时，观察者发出信号触发活塞将其推断。</p>
-                            <strong>面包批注：</strong> 甘蔗是火箭燃料（纸）的核心来源。建议大规模并联排布，一劳永逸。
+                            <p style="margin-bottom: 10px;"><strong>原理深度解析：</strong> 本装置基于“非接触式高度监测”逻辑。当甘蔗生长至三格高度时，位于顶层的侦测器会瞬间识别到方块更新。信号穿过支撑方块激活中间层的普通活塞，将甘蔗的第二层及以上部分推断。由于甘蔗底座未被破坏，它会继续循环生长，形成永动机制。</p>
+                            <strong>面包批注：</strong> 
+                            1. 这是火箭燃料（纸）和图书馆建设的核心来源，建议采取“多模块并联”排布。一排20个模块，挂机一会儿就能收一箱子。<br>
+                            2. <strong>进阶技巧：</strong> 在甘蔗根部下方使用“漏斗矿车”进行全局收集，效率远高于普通漏斗，能有效捕捉所有掉落的甘蔗。
                             <hr style="border-color: rgba(255,215,0,0.3); margin: 10px 0;">
-                            <a href="blueprints/sugarcane_machine3_1.litematic" download style="display: inline-block; background: #FFD700; color: #000; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold;">💾 下载 Litematic 图纸</a>
+                            <div style="text-align: center;">
+                                <a href="blueprints/sugarcane_machine3_1.litematic" download style="display: inline-block; background: #FFD700; color: #000; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold;">💾 下载 Litematic 图纸</a>
+                            </div>
                         </div>
                     ` 
                 }]
             },
             "3.3 2x2活塞门": { 
                 category: "Level 3: Intermediate",
-                title: "2x2 标准内吸式活塞门",
+                title: "2x2 标准内吸式隐藏门",
+                color: "#FFD700",
                 steps: [{ 
                     img: "img/piston_door.png", 
                     text: `
                         <div style="border: 1px solid #FFD700; background: rgba(255,215,0,0.1); padding: 15px; border-radius: 8px;">
-                            <p style="margin-bottom: 10px;"><strong>原理：</strong> 内吸式设计利用双向递归器原理，让门面与墙壁完全齐平。</p>
+                            <p style="margin-bottom: 10px;"><strong>原理深度解析：</strong> 经典的“内吸式（Jeb Door）”结构。它通过两组粘性活塞的复合联动实现：第一组活塞负责将门面方块向内拉动，第二组活塞则负责将门面整体向两侧侧移。利用中继器（Repeater）调节关闭时的延时，可以实现门面开启后与墙体完美齐平，不留任何机械痕迹。</p>
+                            <strong>面包批注：</strong> 
+                            1. 这是红石美学的入门之作。不仅可以装在基地入口，还可以藏在图书馆的书架后面做暗室。<br>
+                            2. <strong>技术重点：</strong> 注意布线的对称性。如果两侧开启时间不统一，视觉上会非常别扭。
+                            <hr style="border-color: rgba(255,215,0,0.3); margin: 10px 0;">
                             <a href="blueprints/2x2活塞门3_3.litematic" download style="display: inline-block; background: #FFD700; color: #000; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold;">💾 下载 Litematic 图纸</a>
                         </div>
                     ` 
@@ -224,11 +242,16 @@
             "4.1 3x3螺旋门": {
                 category: "Level 4: Advanced",
                 title: "3x3 螺旋开启式机械门",
+                color: "#00D4FF",
                 steps: [{ 
                     img: "img/Spiral_Door.png", 
                     text: `
                         <div style="border: 1px solid #00D4FF; background: rgba(0,212,255,0.1); padding: 15px; border-radius: 8px;">
-                            <p style="margin-bottom: 10px;"><strong>原理：</strong> 核心在于底部的二级抽离逻辑，控制方块在开合时的螺旋移动。</p>
+                            <p style="margin-bottom: 10px;"><strong>原理深度解析：</strong> 这是中高级红石的敲门砖。由于3x3正中心那个方块没有任何侧面墙壁支撑活塞，必须利用底部的“二级递归（Double Piston Extender）”结构。通过及其精确的中继器刻数控制，在门开启时先收回外层，再瞬间伸缩收回中心方块。四周方块则按照螺旋顺序依次收回，视觉极度舒适。</p>
+                            <strong>面包批注：</strong> 
+                            1. 这种门的结构复杂且极其吃时序。稍微手抖调错一个中继器的档位，整个门就会因为方块没收回而卡死自毁。<br>
+                            2. <strong>建议：</strong> 初次搭建一定要开着 Litematic 的投影模式对照，尤其是底部的逻辑电路部分。
+                            <hr style="border-color: rgba(255,215,0,0.3); margin: 10px 0;">
                             <a href="blueprints/3x3螺旋门4_1.litematic" download style="display: inline-block; background: #00D4FF; color: #000; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold;">💾 下载 Litematic 图纸</a>
                         </div>
                     ` 
@@ -303,6 +326,7 @@
     </script>
 </body>
 </html>
+
 
 
 
