@@ -33,7 +33,6 @@
             display: flex; gap: 2rem; align-items: center;
             padding: 2.5rem 0; border-bottom: 1px solid rgba(255,255,255,0.05);
         }
-        /* 统一图片容器 */
         .image-container {
             width: 100%; max-width: 480px; height: 270px;
             background: rgba(0,0,0,0.4); border-radius: 1.5rem;
@@ -100,8 +99,8 @@
                 title: "板块三：红石实验室", 
                 items: [
                     { name: "1. 能量起源", subItems: ["1.1 能量源头", "1.2 红石基础"] },
-                    { name: "2. 自动工厂", subItems: ["2.1 自动刷石机", "2.2 半自动农场", "2.3 盾构机"] },
-                    { name: "3. 红石大脑", subItems: ["3.1 甘蔗收割机", "3.2 隐藏物品器", "3.3 2x2活塞门"] },
+                    { name: "2. 自动工厂", subItems: ["2.1 隐藏物品器", "2.2 半自动农场", "2.3 盾构机"] },
+                    { name: "3. 红石大脑", subItems: ["3.1 甘蔗收割机", "3.2 自动刷石机", "3.3 2x2活塞门"] },
                     { name: "4. 熟练于心", subItems: ["4.1 3x3螺旋门", "4.2 垂直飞行器", "4.3 自动酿造台"] },
                     { name: "5. 扬帆起航", subItems: ["5.1 16色羊毛厂", "5.2 循环活塞库", "5.3 试炼密室刷怪塔"] },
                     { name: "💀 最终挑战", subItems: ["世吞 (World Eater)", "天基屠龙炮"] }
@@ -272,6 +271,7 @@
                 }]
             },
         };
+
         function openPage(category, subItems = null, customTitle = null) {
             const home = document.getElementById('home-page');
             const detail = document.getElementById('detail-page');
@@ -339,18 +339,3 @@
     </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
