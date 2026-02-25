@@ -145,6 +145,27 @@
                     { img: "img/redstone_signal.png", text: "<strong>4. 单一性:</strong> 红石粉连接红石方块时，只有直接连接会传递红石信号。" }
                 ]
             },
+            "2.1 隐藏物品器": {
+                category: "Level 2: Factory",
+                title: "方块置换式隐藏装置",
+                color: "#4ade80",
+                steps: [{ 
+                    img: "img/hide-item.png", 
+                    text: `
+                    <div style="border: 1px solid #4ade80; background: rgba(74,222,128,0.1); padding: 15px; border-radius: 8px;">
+                        <p style="margin-bottom: 10px;"><strong>原理深度解析：</strong> 本装置利用粘性活塞的复合推拉逻辑。通过红石信号同时激活垂直与水平方向的活塞组，实现地面方块与下方隐藏容器的瞬间位置交换。当信号切断时，活塞回弹，地表恢复平整，从而达到完美隐藏物资的效果。</p>
+                        <strong>面包批注：</strong> 
+                        1. 这是最基础的隐藏逻辑，适用于任何平整的地表或墙面。<br>
+                        2. <strong>注意点：</strong> 确保活塞推拉的方块属于可移动属性，且电路布线不要干扰到周围的装饰方块。<br>
+                        <span style="color: #9ca3af; font-size: 0.9em;">（图片仅展示结构逻辑，具体样子玩家可自行修改。如有不符，以文字为准）</span>
+                        <hr style="border-color: rgba(74,222,128,0.3); margin: 10px 0;">
+                        <div style="text-align: center;">
+                            <a href="blueprints/隐藏物品器2_1.litematic" download style="display: inline-block; background: #4ade80; color: #000; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold;">💾 下载 Litematic 图纸</a>
+                        </div>
+                    </div>
+                    ` 
+                }]
+            },
             "2.2 半自动农场": {
                 category: "Level 2: Factory",
                 title: "大规模水流式半自动农场",
@@ -339,3 +360,4 @@
     </script>
 </body>
 </html>
+
