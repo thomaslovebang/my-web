@@ -24,7 +24,15 @@
             box-shadow: 0 15px 30px rgba(93, 64, 55, 0.1);
         }
         .page-fade { transition: opacity 0.4s ease, transform 0.4s ease; }
-        .hidden-page { opacity: 0; pointer-events: none; transform: translateY(20px); display: none !important; }
+        /* 修复：拆分隐藏样式，避免 pointer-events 和 display 冲突 */
+        .hidden-page { 
+            opacity: 0; 
+            pointer-events: none; 
+            transform: translateY(20px); 
+        }
+        .hidden-page.hidden-display {
+            display: none !important;
+        }
         .bread-emoji { position: fixed; pointer-events: none; font-size: 40px; z-index: 200; transform: translate(-50%, -50%); }
         .hero-text { color: #5d4037; text-shadow: 2px 2px 0px rgba(255, 255, 255, 0.4); }
         .sub-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; width: 100%; position: relative; z-index: 10; }
@@ -46,7 +54,7 @@
             .image-container { max-width: 100%; height: 200px; }
         }
         .no-scrollbar::-webkit-scrollbar { display: none; }
-        #detail-page { pointer-events: auto; }
+
     </style>
 </head>
 <body class="overflow-x-hidden">
@@ -70,7 +78,7 @@
         </main>
     </div>
 
-    <div id="detail-page" class="page-fade hidden-page fixed inset-0 overflow-y-auto bg-transparent p-6 pt-32 no-scrollbar z-[100]">
+    <div id="detail-page" class="page-fade hidden-page hidden-display fixed inset-0 overflow-y-auto bg-transparent p-6 pt-32 no-scrollbar z-[100]">
         <div class="container mx-auto max-w-6xl relative">
             <button onclick="backToHome(event)" class="fixed top-8 left-8 text-stone-700 hover:text-stone-900 font-black z-[120] bg-white/50 px-6 py-2 rounded-full backdrop-blur-md border border-white/20 shadow-sm active:scale-95 transition-transform">← BACK</button>
             <div class="text-center mb-12"><h2 id="detail-title" class="text-5xl font-black text-stone-800 hero-text"></h2></div>
@@ -78,7 +86,7 @@
         </div>
     </div>
 
-    <div id="article-overlay" class="page-fade hidden-page fixed inset-0 z-[150] bg-stone-950/95 backdrop-blur-2xl flex justify-center items-center">
+    <div id="article-overlay" class="page-fade hidden-page hidden-display fixed inset-0 z-[150] bg-stone-950/95 backdrop-blur-2xl flex justify-center items-center">
         <div class="w-full max-w-5xl h-screen md:h-[90vh] glass-card overflow-hidden rounded-none md:rounded-[3rem] border border-white/10 flex flex-col shadow-2xl">
             <div class="p-8 border-b border-white/10 flex justify-between items-center bg-stone-900/50">
                 <div>
@@ -334,8 +342,19 @@
                 };
                 container.appendChild(block);
             });
+            
+            // 修复：分步切换样式，先隐藏视觉，再隐藏显示
             home.style.opacity = '0';
-            setTimeout(() => { home.classList.add('hidden-page'); detail.classList.remove('hidden-page'); setTimeout(() => { detail.style.opacity = '1'; detail.style.transform = 'translateY(0)'; }, 50); }, 400);
+            setTimeout(() => { 
+                home.classList.add('hidden-page'); 
+                // 显示详情页：先移除 display:none，再恢复 pointer-events 和透明度
+                detail.classList.remove('hidden-display');
+                setTimeout(() => {
+                    detail.classList.remove('hidden-page');
+                    detail.style.opacity = '1';
+                    detail.style.transform = 'translateY(0)';
+                }, 50);
+            }, 400);
         }
 
         function showTactical(data) {
@@ -351,14 +370,25 @@
                     <div class="flex-grow px-4 text-stone-300 leading-relaxed text-xl">${step.text}</div>
                 </div>
             `).join('');
-            overlay.classList.remove('hidden-page');
-            setTimeout(() => { overlay.style.opacity = '1'; }, 50);
+            
+            // 修复：分步显示弹窗
+            overlay.classList.remove('hidden-display');
+            setTimeout(() => {
+                overlay.classList.remove('hidden-page');
+                overlay.style.opacity = '1';
+            }, 50);
         }
 
         function closeArticle() {
             const overlay = document.getElementById('article-overlay');
             overlay.style.opacity = '0';
-            setTimeout(() => { overlay.classList.add('hidden-page'); }, 400);
+            setTimeout(() => { 
+                overlay.classList.add('hidden-page');
+                // 延迟添加 display:none，确保过渡动画完成
+                setTimeout(() => {
+                    overlay.classList.add('hidden-display');
+                }, 100);
+            }, 400);
         }
 
         function backToHome(e) {
@@ -366,7 +396,16 @@
             const home = document.getElementById('home-page');
             const detail = document.getElementById('detail-page');
             detail.style.opacity = '0';
-            setTimeout(() => { detail.classList.add('hidden-page'); home.classList.remove('hidden-page'); setTimeout(() => { home.style.opacity = '1'; }, 50); }, 400);
+            setTimeout(() => { 
+                detail.classList.add('hidden-page');
+                // 延迟添加 display:none，确保过渡动画完成
+                setTimeout(() => {
+                    detail.classList.add('hidden-display');
+                }, 100);
+                // 显示主页
+                home.classList.remove('hidden-page');
+                home.style.opacity = '1';
+            }, 400);
         }
 
         const bt = ['🍞', '🥐', '🥖', '🥨', '🥯', '🧸'];
@@ -381,15 +420,3 @@
     </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
