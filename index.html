@@ -23,16 +23,9 @@
             transform: translateY(-5px);
             box-shadow: 0 15px 30px rgba(93, 64, 55, 0.1);
         }
-        .page-fade { transition: opacity 0.4s ease, transform 0.4s ease; }
-        /* 修复：拆分隐藏样式，避免 pointer-events 和 display 冲突 */
-        .hidden-page { 
-            opacity: 0; 
-            pointer-events: none; 
-            transform: translateY(20px); 
-        }
-        .hidden-page.hidden-display {
-            display: none !important;
-        }
+
+        /* 👇 这里只保留最安全的显隐，绝对不锁点击 */
+        .hidden { display: none; }
         .bread-emoji { position: fixed; pointer-events: none; font-size: 40px; z-index: 200; transform: translate(-50%, -50%); }
         .hero-text { color: #5d4037; text-shadow: 2px 2px 0px rgba(255, 255, 255, 0.4); }
         .sub-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; width: 100%; position: relative; z-index: 10; }
@@ -54,357 +47,342 @@
             .image-container { max-width: 100%; height: 200px; }
         }
         .no-scrollbar::-webkit-scrollbar { display: none; }
-
     </style>
 </head>
 <body class="overflow-x-hidden">
 
-    <div id="home-page" class="page-fade">
-        <header class="pt-20 pb-10 text-center">
-            <h1 class="text-6xl font-black hero-text mb-4 tracking-tighter uppercase">eatenbread.com</h1>
-        </header>
-        <main class="container mx-auto px-6 max-w-6xl">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-center">
-                <div class="glass-card p-8 rounded-3xl cursor-pointer" onclick="openPage('survival')">
-                    <div class="text-4xl mb-4">🗺️</div><h3 class="text-2xl font-bold text-stone-800">生存指南</h3>
-                </div>
-                <div class="glass-card p-8 rounded-3xl cursor-pointer" onclick="openPage('pvp')">
-                    <div class="text-4xl mb-4">⚔️</div><h3 class="text-2xl font-bold text-stone-800">面包武道馆</h3>
-                </div>
-                <div class="glass-card p-8 rounded-3xl cursor-pointer" onclick="openPage('redstone')">
-                    <div class="text-4xl mb-4">⚙️</div><h3 class="text-2xl font-bold text-stone-800">红石实验室</h3>
-                </div>
+<!-- 👇 你的页面结构完全没变 -->
+<div id="home-page">
+    <header class="pt-20 pb-10 text-center">
+        <h1 class="text-6xl font-black hero-text mb-4 tracking-tighter uppercase">eatenbread.com</h1>
+    </header>
+    <main class="container mx-auto px-6 max-w-6xl">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-center">
+            <div class="glass-card p-8 rounded-3xl cursor-pointer" onclick="openPage('survival')">
+                <div class="text-4xl mb-4">🗺️</div><h3 class="text-2xl font-bold text-stone-800">生存指南</h3>
             </div>
-        </main>
-    </div>
-
-    <div id="detail-page" class="page-fade hidden-page hidden-display fixed inset-0 overflow-y-auto bg-transparent p-6 pt-32 no-scrollbar z-[100]">
-        <div class="container mx-auto max-w-6xl relative">
-            <button onclick="backToHome(event)" class="fixed top-8 left-8 text-stone-700 hover:text-stone-900 font-black z-[120] bg-white/50 px-6 py-2 rounded-full backdrop-blur-md border border-white/20 shadow-sm active:scale-95 transition-transform">← BACK</button>
-            <div class="text-center mb-12"><h2 id="detail-title" class="text-5xl font-black text-stone-800 hero-text"></h2></div>
-            <div id="sub-blocks-container" class="sub-grid pb-20"></div>
-        </div>
-    </div>
-
-    <div id="article-overlay" class="page-fade hidden-page hidden-display fixed inset-0 z-[150] bg-stone-950/95 backdrop-blur-2xl flex justify-center items-center">
-        <div class="w-full max-w-5xl h-screen md:h-[90vh] glass-card overflow-hidden rounded-none md:rounded-[3rem] border border-white/10 flex flex-col shadow-2xl">
-            <div class="p-8 border-b border-white/10 flex justify-between items-center bg-stone-900/50">
-                <div>
-                    <span id="article-category" class="text-orange-500 font-mono text-xs tracking-widest uppercase mb-1 block underline underline-offset-4"></span>
-                    <h2 id="article-title" class="text-3xl font-black text-white uppercase tracking-tight"></h2>
-                </div>
-                <button onclick="closeArticle()" class="text-stone-500 hover:text-white text-5xl transition-transform hover:rotate-90">×</button>
+            <div class="glass-card p-8 rounded-3xl cursor-pointer" onclick="openPage('pvp')">
+                <div class="text-4xl mb-4">⚔️</div><h3 class="text-2xl font-bold text-stone-800">面包武道馆</h3>
             </div>
-            <div id="article-content" class="flex-grow overflow-y-auto p-8 md:p-12 space-y-2 no-scrollbar bg-stone-900/20"></div>
+            <div class="glass-card p-8 rounded-3xl cursor-pointer" onclick="openPage('redstone')">
+                <div class="text-4xl mb-4">⚙️</div><h3 class="text-2xl font-bold text-stone-800">红石实验室</h3>
+            </div>
         </div>
-    </div>
+    </main>
+</div>
 
-    <script>
-        const contentData = {
-            survival: { title: "板块一：生存指南", items: [{name:"1. 基础准备", subItems:["1.1 基础工具", "1.2 建筑材料"]}, "2. 饥饿值&血量", "3. 村民贸易", "4. 合理的“外挂”", "5. 下界&末地“通行证”", "6. 高级追求", "7. 全成就"] },
-            pvp: { title: "板块二：面包武道馆", items: ["1. 合成配方", "2. 基础身法", "3. 武器博弈", "4. 防御保命", "5. 高级进阶"] },
-            redstone: { 
-                title: "板块三：红石实验室", 
-                items: [
-                    { name: "1. 能量起源", subItems: ["1.1 能量源头", "1.2 红石基础"] },
-                    { name: "2. 自动工厂", subItems: ["2.1 隐藏物品器", "2.2 半自动农场", "2.3 全自动甘蔗机"] },
-                    { name: "3. 红石大脑", subItems: ["3.1 2x2活塞门", "3.2 自动刷石机", "3.3 盾构机"] },
-                    { name: "4. 熟练于心", subItems: ["4.1 3x3螺旋门", "4.2 垂直飞行器", "4.3 自动酿造台"] },
-                    { name: "5. 扬帆起航", subItems: ["5.1 16色羊毛厂", "5.2 循环活塞库", "5.3 试炼密室刷怪塔"] },
-                    { name: "💀 最终挑战", subItems: ["世吞 (World Eater)", "天基屠龙炮"] }
-                ] 
+<div id="detail-page" class="hidden fixed inset-0 overflow-y-auto bg-transparent p-6 pt-32 no-scrollbar z-[100]">
+    <div class="container mx-auto max-w-6xl relative">
+        <button onclick="backToHome()" class="fixed top-8 left-8 text-stone-700 hover:text-stone-900 font-black z-[120] bg-white/50 px-6 py-2 rounded-full backdrop-blur-md border border-white/20 shadow-sm active:scale-95 transition-transform">← BACK</button>
+        <div class="text-center mb-12"><h2 id="detail-title" class="text-5xl font-black text-stone-800 hero-text"></h2></div>
+        <div id="sub-blocks-container" class="sub-grid pb-20"></div>
+    </div>
+</div>
+
+<div id="article-overlay" class="hidden fixed inset-0 z-[150] bg-stone-950/95 backdrop-blur-2xl flex justify-center items-center">
+    <div class="w-full max-w-5xl h-screen md:h-[90vh] glass-card overflow-hidden rounded-none md:rounded-[3rem] border border-white/10 flex flex-col shadow-2xl">
+        <div class="p-8 border-b border-white/10 flex justify-between items-center bg-stone-900/50">
+            <div>
+                <span id="article-category" class="text-orange-500 font-mono text-xs tracking-widest uppercase mb-1 block underline underline-offset-4"></span>
+                <h2 id="article-title" class="text-3xl font-black text-white uppercase tracking-tight"></h2>
+            </div>
+            <button onclick="closeArticle()" class="text-stone-500 hover:text-white text-5xl transition-transform hover:rotate-90">×</button>
+        </div>
+        <div id="article-content" class="flex-grow overflow-y-auto p-8 md:p-12 space-y-2 no-scrollbar bg-stone-900/20"></div>
+    </div>
+</div>
+
+<script>
+// 👇 你的所有数据 100% 原样不动
+const contentData = {
+    survival: { title: "板块一：生存指南", items: [{name:"1. 基础准备", subItems:["1.1 基础工具", "1.2 建筑材料"]}, "2. 饥饿值&血量", "3. 村民贸易", "4. 合理的“外挂”", "5. 下界&末地“通行证”", "6. 高级追求", "7. 全成就"] },
+    pvp: { title: "板块二：面包武道馆", items: ["1. 合成配方", "2. 基础身法", "3. 武器博弈", "4. 防御保命", "5. 高级进阶"] },
+    redstone: { 
+        title: "板块三：红石实验室", 
+        items: [
+            { name: "1. 能量起源", subItems: ["1.1 能量源头", "1.2 红石基础"] },
+            { name: "2. 自动工厂", subItems: ["2.1 隐藏物品器", "2.2 半自动农场", "2.3 全自动甘蔗机"] },
+            { name: "3. 红石大脑", subItems: ["3.1 2x2活塞门", "3.2 自动刷石机", "3.3 盾构机"] },
+            { name: "4. 熟练于心", subItems: ["4.1 3x3螺旋门", "4.2 垂直飞行器", "4.3 自动酿造台"] },
+            { name: "5. 扬帆起航", subItems: ["5.1 16色羊毛厂", "5.2 循环活塞库", "5.3 试炼密室刷怪塔"] },
+            { name: "💀 最终挑战", subItems: ["世吞 (World Eater)", "天基屠龙炮"] }
+        ] 
+    }
+};
+
+const tacticalData = {
+    "1. 合成配方": {
+        category: "Weapon Crafting",
+        title: "核心武器库：合成与进阶",
+        steps: [
+            { img: "img/sword.png", text: "<strong>剑 (Sword):</strong> <br>基础：2*矿物 + 1*木棍。<br><strong>面包批注：</strong> 配合“锋利V”和“横扫之刃”，它是清理僵尸围城的终极神器。" },
+            { img: "img/axe.png", text: "<strong>斧 (Axe):</strong> <br>基础：3*矿物 + 2*木棍。<br><strong>面包批注：</strong> 1.21 版本中，斧头是唯一能有效破除对方盾牌防守的重型武器。" },
+            { img: "img/bow.png", text: "<strong>弓 (Bow):</strong> <br>配方：3*木棍 + 3*线。<br><strong>面包批注：</strong> 别忘了给它打上“无限”或者“经验修补”。" },
+            { img: "img/crossbow.png", text: "<strong>弩 (Crossbow):</strong> <br>配方：3*木棍 + 2*线 + 1*铁锭 + 1*钩子。<br><strong>进阶：</strong> 配合“多重射击”和“烟花火箭”，能打出范围爆炸伤害。" },
+            { img: "img/mace.png", text: "<strong>重锤 (Mace):</strong> <br>配方：1*沉重核心 + 1*旋风棒。<br><strong>核心机制：</strong> 1.21 新贵。从高处落下攻击，高度越高伤害越高，且能抵消掉落伤害！" },
+            { img: "img/spear.png", text: "<strong>长矛 (Spear):</strong> <br>配方：1*矿物 + 2*木棍。<br><strong>面包批注：</strong> 攻击距离非常远，可以达到原先近战武器无法达到的攻击距离。" },
+            { img: "img/trident.png", text: "<strong>三叉戟 (Trident):</strong> <br>获取：溺尸掉落（不可合成）。<br><strong>面包批注：</strong> 附魔“激流”后，在雨天你就是会飞的超人。" }
+        ]
+    },
+    "1.1 能量源头": {
+        category: "Redstone Power",
+        title: "核心能源合成清单",
+        steps: [
+            { img: "img/redstone_torch.png", text: "<strong>红石火把:</strong> 信号反转的核心（非门）。能向上方块传导强信号。" },
+            { img: "img/redstone_block.png", text: "<strong>红石块:</strong> 永恒的 15 级强信号源。" },
+            { img: "img/observer.png", text: "<strong>侦测器:</strong> 监视方块更新。只要面前有变化，就发出一帧脉冲。" },
+            { img: "img/target.png", text: "<strong>标靶:</strong> 只要被射中就会传输红石信号，远程武器练习的好帮手。" },
+            { img: "img/comparator.png", text: "<strong>红石比较器:</strong> 监视方块更新。只要两个信号强度不一致就会发出信号。" },
+            { img: "img/repeater.png", text: "<strong>红石中继器:</strong> 在红石信号即将消失的时候，使用中继器连接即可恢复至15级！" },
+            { img: "img/daylight_detector.png", text: "<strong>阳光探测器:</strong> 监视时间变化，发出对应的红石强度。" }
+        ]
+    },
+    "1.2 红石基础": {
+        category: "Redstone Theory",
+        title: "红石能量基础知识",
+        steps: [
+            { img: "img/redstone_decay.png", text: "<strong>1. 15格衰减律:</strong> 信号随距离逐格递减。" },
+            { img: "img/redstone_invert.png", text: "<strong>2. 逻辑反转:</strong> 逻辑门的基础。" },
+            { img: "img/redstone_freq.png", text: "<strong>3. 高频红石:</strong> 利用侦测器的特性让两个侦测器互相发出信号达到此效果。" },
+            { img: "img/redstone_signal.png", text: "<strong>4. 单一性:</strong> 红石粉连接红石方块时，只有直接连接会传递红石信号。" }
+        ]
+    },
+    "2.1 隐藏物品器": {
+        category: "Level 2: Factory",
+        title: "方块置换式隐藏装置",
+        color: "#4ade80",
+        steps: [{ 
+            img: "img/hide-item.png", 
+            text: `
+                <div style="border: 1px solid #4ade80; background: rgba(74,222,128,0.1); padding: 15px; border-radius: 8px;">
+                    <p style="margin-bottom: 10px;"><strong>原理深度解析：</strong> 本装置利用粘性活塞的复合推拉逻辑。通过红石信号同时激活垂直与水平方向的活塞组，实现地面方块与下方隐藏容器的瞬间位置交换。当信号切断时，活塞回弹，地表恢复平整，从而达到完美隐藏物资的效果。</p>
+                    <strong>面包批注：</strong> 
+                    1. 这是最基础的隐藏逻辑，适用于任何平整的地表或墙面。<br>
+                    2. <strong>注意点：</strong> 确保活塞推拉的方块属于可移动属性，且电路布线不要干扰到周围的装饰方块。上方的泥土方块可以替换为任意可推动的方块。<br>
+                    <span style="color: #9ca3af; font-size: 0.9em;">（图片仅展示结构逻辑，具体样子玩家可自行修改。如有不符，以文字为准）</span>
+                    <hr style="border-color: rgba(74,222,128,0.3); margin: 10px 0;">
+                    <div style="text-align: center;">
+                        <a href="blueprints/隐藏物品器.litematic" download style="display: inline-block; background: #4ade80; color: #000; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold;">💾 下载 Litematic 图纸</a>
+                    </div>
+                </div>
+            ` 
+        }]
+    },
+    "2.2 半自动农场": {
+        category: "Level 2: Factory",
+        title: "大规模水流式半自动农场",
+        color: "#4ade80",
+        steps: [{ 
+            img: "img/wheat_farm.png", 
+            text: `
+                <div style="border: 1px solid #4ade80; background: rgba(74,222,128,0.1); padding: 15px; border-radius: 8px;">
+                    <p style="margin-bottom: 10px;"><strong>原理深度解析：</strong> 本系统利用发射器（Dispenser）内置水桶，在接收到红石脉冲后瞬间释放水流。水流通过流体更新算法，将成熟作物从耕地上“震落”变为掉落物实体。随后，利用水流的推进力将散落的资源统一冲刷至底部的收集槽（漏斗链），实现一键收割。</p>
+                    <strong>面包批注：</strong> 
+                    1. 这是生存初期的“财富密码”，建议配合简单的时钟电路（Clock Circuit）实现收割后自动关水。<br>
+                    2. <strong>避坑指南：</strong> 务必在水流路径上方覆盖玻璃或其他透明方块，防止作物在冲刷过程中因物理碰撞飞溅到耕地之外，造成资源浪费。<br>
+                    <span style="color: #9ca3af; font-size: 0.9em;">（图片仅展示结构逻辑，具体样子玩家可自行修改。如有不符，以文字为准）</span>
+                    <hr style="border-color: rgba(74,222,128,0.3); margin: 10px 0;">
+                    <div style="text-align: center;">
+                        <a href="blueprints/半自动农场.litematic" download style="display: inline-block; background: #4ade80; color: #000; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold;">💾 下载 Litematic 图纸</a>
+                    </div>
+                </div>
+            ` 
+        }]
+    },
+    "2.3 全自动甘蔗机": {
+        category: "Level 2: Factory",
+        title: "观察者式全自动甘蔗收割机",
+        color: "#4ade80",
+        steps: [{ 
+            img: "img/sugarcane_machine.png", 
+            text: `
+                <div style="border: 1px solid #4ade80; background: rgba(74,222,128,0.1); padding: 15px; border-radius: 8px;">
+                    <p style="margin-bottom: 10px;"><strong>原理深度解析：</strong> 本装置基于“非接触式高度监测”逻辑。当甘蔗生长至三格高度时，位于顶层的侦测器会瞬间识别到方块更新。信号穿过支撑方块激活中间层的普通活塞，将甘蔗的第二层及以上部分推断。由于甘蔗底座未被破坏，它会继续循环生长。</p>
+                    <strong>面包批注：</strong> 
+                    1. 这是火箭燃料（纸）的核心来源，建议采取“多模块并联”排布。<br>
+                    2. <strong>进阶技巧：</strong> 在甘蔗根部下方使用“漏斗矿车”进行全局收集，效率远高于普通漏斗。<br>
+                    <span style="color: #9ca3af; font-size: 0.9em;">（图片仅展示结构逻辑，具体样子玩家可自行修改。如有不符，以文字为准）</span>
+                    <hr style="border-color: rgba(74,222,128,0.3); margin: 10px 0;">
+                    <div style="text-align: center;">
+                        <a href="blueprints/全自动甘蔗机.litematic" download style="display: inline-block; background: #4ade80; color: #000; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold;">💾 下载 Litematic 图纸</a>
+                    </div>
+                </div>
+            ` 
+        }]
+    },
+    "3.1 2x2活塞门": { 
+        category: "Level 3: Intermediate",
+        title: "2x2 标准内吸式隐藏门",
+        color: "#FFD700",
+        steps: [{ 
+            img: "img/piston_door.png", 
+            text: `
+                <div style="border: 1px solid #FFD700; background: rgba(255,215,0,0.1); padding: 15px; border-radius: 8px;">
+                    <p style="margin-bottom: 10px;"><strong>原理深度解析：</strong> 经典的“内吸式（Jeb Door）”结构。它通过两组粘性活塞的复合联动实现：第一组活塞负责将门面方块向内拉动，第二组活塞则负责将门面整体向两侧侧移。利用中继器调节延时实现完美平齐。</p>
+                    <strong>面包批注：</strong> 
+                    1. 红石美学的入门之作。不仅可以装在基地入口，还可以藏在图书馆的书架后面做暗室。<br>
+                    2. <strong>技术重点：</strong> 注意布线的对称性。如果两侧开启时间不统一，视觉上会非常别扭。<br>
+                    <span style="color: #9ca3af; font-size: 0.9em;">（图片仅展示结构逻辑，具体样子玩家可自行修改。如有不符，以文字为准）</span>
+                    <hr style="border-color: rgba(255,215,0,0.3); margin: 10px 0;">
+                    <div style="text-align: center;">
+                        <a href="blueprints/2x2活塞门.litematic" download style="display: inline-block; background: #FFD700; color: #000; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold;">💾 下载 Litematic 图纸</a>
+                    </div>
+                </div>
+            ` 
+        }]
+    },
+    "3.2 自动刷石机": {
+        category: "Level 3: Intermediate",
+        title: "高频防损式全自动炸石机",
+        color: "#FFD700",
+        steps: [{ 
+            img: "img/stone_generator.png", 
+            text: `
+                <div style="border: 1px solid #FFD700; background: rgba(255,215,0,0.1); padding: 15px; border-radius: 8px;">
+                    <p style="margin-bottom: 10px;"><strong>原理深度解析：</strong> 该装置利用水与岩浆接触生成圆石。通过高频红石时钟控制顶部的 TNT 复制机构，在特定高度引爆瞬间将圆石转化为掉落物，并由底部的漏斗阵列回收。</p>
+                    <strong>面包批注：</strong> 
+                    1. <strong>安全核心：</strong> 水坑的设计不仅是为了刷石，更是为了吸收 TNT 的爆炸冲击波，防止机器炸膛。使用红石火把塔传输信号确保逻辑通畅。<br>
+                    2. <strong>效率调优：</strong> 调整中继器延迟，让 TNT 落下频率刚好匹配圆石生成速度。避免了同时出现2个TNT互相爆炸的情况。<br>
+                    <span style="color: #9ca3af; font-size: 0.9em;">（图片仅展示结构逻辑，具体样子玩家可自行修改。如有不符，以文字为准）
+                    <hr style="border-color: rgba(255,215,0,0.3); margin: 10px 0;">
+                    <div style="text-align: center;">
+                        <a href="blueprints/全自动刷石机.litematic" download style="display: inline-block; background: #FFD700; color: #000; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold;">💾 下载 Litematic 图纸</a>
+                    </div>
+                </div>
+            ` 
+        }]
+    },
+    "3.3 盾构机": {
+        category: "Level 3: Intermediate",
+        title: "音符盒受控式盾构机",
+        color: "#FFD700",
+        steps: [{ 
+            img: "img/dungouji.png", 
+            text: `
+                <div style="border: 1px solid #FFD700; background: rgba(255,215,0,0.1); padding: 15px; border-radius: 8px;">
+                    <p style="margin-bottom: 10px;"><strong>原理深度解析：</strong> 利用音符盒更新触发侦测器，立即激活推进活塞组。通过活塞间的逻辑时序，带动前端的TNT复制机构进行水平位移，实现精准的手动步进效果。</p>
+                    <strong>面包批注：</strong> 
+                    1. 受控式更适合处理复杂地层。遇到水坑或黑曜石时，能立刻收手避免机器损毁。<br>
+                    2. <strong>致命提醒：</strong> 启动前必须观察前方是否有流水，防止 TNT 在水中引爆导致回弹炸毁机器。<br>
+                    <span style="color: #9ca3af; font-size: 0.9em;">（图片仅展示结构逻辑，具体样子玩家可自行修改。如有不符，以文字为准）</span>
+                    <hr style="border-color: rgba(255,215,0,0.3); margin: 10px 0;">
+                    <div style="text-align: center;">
+                        <a href="blueprints/盾构机.litematic" download style="display: inline-block; background: #FFD700; color: #000; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold;">💾 下载 Litematic 图纸</a>
+                    </div>
+                </div>
+            ` 
+        }]
+    },
+    "4.1 3x3螺旋门": {
+        category: "Level 4: Advanced",
+        title: "3x3 螺旋开启式机械门",
+        color: "#00D4FF",
+        steps: [{ 
+            img: "img/Spiral_Door.png", 
+            text: `
+                <div style="border: 1px solid #00D4FF; background: rgba(0,212,255,0.1); padding: 15px; border-radius: 8px;">
+                    <p style="margin-bottom: 10px;"><strong>原理深度解析：</strong> 需利用底部的“二级递归（Double Piston Extender）”结构。通过及其精确的中继器刻数控制，在门开启时收回中心方块。四周方块则按照螺旋顺序依次收回。</p>
+                    <strong>面包批注：</strong> 
+                    1. 这种门的结构复杂且极其吃时序。稍微调错一个中继器档位，整个门就会因为方块没收回而卡死。<br>
+                    2. <strong>建议：</strong> 初次搭建一定要开着 Litematic 的投影模式对照逻辑电路部分。<br>
+                    <span style="color: #9ca3af; font-size: 0.9em;">（图片仅展示结构逻辑，具体样子玩家可自行修改。如有不符，以文字为准）</span>
+                    <hr style="border-color: rgba(0,212,255,0.3); margin: 10px 0;">
+                    <div style="text-align: center;">
+                        <a href="blueprints/3x3螺旋门.litematic" download style="display: inline-block; background: #00D4FF; color: #000; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold;">💾 下载 Litematic 图纸</a>
+                    </div>
+                </div>
+            ` 
+        }]
+    },
+    "4.2 垂直飞行器": {
+        category: "Level 4: Advanced",
+        title: "单向垂直升降引擎",
+        color: "#00D4FF",
+        steps: [{ 
+            img: "img/vertical_flyer.png", 
+            text: `
+                <div style="border: 1px solid #00D4FF; background: rgba(0,212,255,0.1); padding: 15px; border-radius: 8px;">
+                    <p><strong>原理分析：</strong> 利用观察者面朝下捕捉更新。当底部更新时，观察者激活顶部的粘性活塞，将整个机身（含粘性块）向上拉动。随后下方活塞跟进，完成单向循环。</p>
+                    <strong>面包批注：</strong> 
+                    1. 非常适合做全自动电梯或顶层轰炸机的上升部分。<br>
+                    2. <strong>注意：</strong> 顶端一定要有“不可移动方块”挡住，否则它会一直飞到高度上限。<br>
+                    <span style="color: #9ca3af; font-size: 0.9em;">（图片仅展示结构逻辑，具体样子玩家可自行修改。如有不符，以文字为准）</span>
+                    <hr style="border-color: rgba(0,212,255,0.3); margin: 10px 0;">
+                    <div style="text-align: center;">
+                        <a href="blueprints/垂直飞行器.litematic" download style="display: inline-block; background: #00D4FF; color: #000; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold;">💾 下载 Litematic 图纸</a>
+                    </div>
+                </div>
+            ` 
+        }]
+    }
+};
+
+// 👇 最稳定、最简单的 JS，保证能点
+function show(id) { document.getElementById(id).classList.remove('hidden'); }
+function hide(id) { document.getElementById(id).classList.add('hidden'); }
+
+function openPage(category, subItems, customTitle) {
+    const home = document.getElementById('home-page');
+    const detail = document.getElementById('detail-page');
+    const container = document.getElementById('sub-blocks-container');
+    let data = subItems ? { title: customTitle, items: subItems } : contentData[category];
+    
+    document.getElementById('detail-title').innerText = data.title;
+    container.innerHTML = '';
+    
+    data.items.forEach(item => {
+        const block = document.createElement('div');
+        block.className = 'glass-card p-6 rounded-2xl text-center font-bold text-stone-700 cursor-pointer';
+        const name = typeof item === 'object' ? item.name : item;
+        block.innerText = name;
+        block.onclick = () => {
+            if (typeof item === 'object' && item.subItems) {
+                openPage(null, item.subItems, item.name);
+            } else if (tacticalData[name]) {
+                showTactical(tacticalData[name]);
+            } else {
+                alert("【" + name + "】正在努力烤制中...");
             }
         };
+        container.appendChild(block);
+    });
 
-        const tacticalData = {
-            "1. 合成配方": {
-                category: "Weapon Crafting",
-                title: "核心武器库：合成与进阶",
-                steps: [
-                    { img: "img/sword.png", text: "<strong>剑 (Sword):</strong> <br>基础：2*矿物 + 1*木棍。<br><strong>面包批注：</strong> 配合“锋利V”和“横扫之刃”，它是清理僵尸围城的终极神器。" },
-                    { img: "img/axe.png", text: "<strong>斧 (Axe):</strong> <br>基础：3*矿物 + 2*木棍。<br><strong>面包批注：</strong> 1.21 版本中，斧头是唯一能有效破除对方盾牌防守的重型武器。" },
-                    { img: "img/bow.png", text: "<strong>弓 (Bow):</strong> <br>配方：3*木棍 + 3*线。<br><strong>面包批注：</strong> 别忘了给它打上“无限”或者“经验修补”。" },
-                    { img: "img/crossbow.png", text: "<strong>弩 (Crossbow):</strong> <br>配方：3*木棍 + 2*线 + 1*铁锭 + 1*钩子。<br><strong>进阶：</strong> 配合“多重射击”和“烟花火箭”，能打出范围爆炸伤害。" },
-                    { img: "img/mace.png", text: "<strong>重锤 (Mace):</strong> <br>配方：1*沉重核心 + 1*旋风棒。<br><strong>核心机制：</strong> 1.21 新贵。从高处落下攻击，高度越高伤害越高，且能抵消掉落伤害！" },
-                    { img: "img/spear.png", text: "<strong>长矛 (Spear):</strong> <br>配方：1*矿物 + 2*木棍。<br><strong>面包批注：</strong> 攻击距离非常远，可以达到原先近战武器无法达到的攻击距离。" },
-                    { img: "img/trident.png", text: "<strong>三叉戟 (Trident):</strong> <br>获取：溺尸掉落（不可合成）。<br><strong>面包批注：</strong> 附魔“激流”后，在雨天你就是会飞的超人。" }
-                ]
-            },
-            "1.1 能量源头": {
-                category: "Redstone Power",
-                title: "核心能源合成清单",
-                steps: [
-                    { img: "img/redstone_torch.png", text: "<strong>红石火把:</strong> 信号反转的核心（非门）。能向上方块传导强信号。" },
-                    { img: "img/redstone_block.png", text: "<strong>红石块:</strong> 永恒的 15 级强信号源。" },
-                    { img: "img/observer.png", text: "<strong>侦测器:</strong> 监视方块更新。只要面前有变化，就发出一帧脉冲。" },
-                    { img: "img/target.png", text: "<strong>标靶:</strong> 只要被射中就会传输红石信号，远程武器练习的好帮手。" },
-                    { img: "img/comparator.png", text: "<strong>红石比较器:</strong> 监视方块更新。只要两个信号强度不一致就会发出信号。" },
-                    { img: "img/repeater.png", text: "<strong>红石中继器:</strong> 在红石信号即将消失的时候，使用中继器连接即可恢复至15级！" },
-                    { img: "img/daylight_detector.png", text: "<strong>阳光探测器:</strong> 监视时间变化，发出对应的红石强度。" }
-                ]
-            },
-            "1.2 红石基础": {
-                category: "Redstone Theory",
-                title: "红石能量基础知识",
-                steps: [
-                    { img: "img/redstone_decay.png", text: "<strong>1. 15格衰减律:</strong> 信号随距离逐格递减。" },
-                    { img: "img/redstone_invert.png", text: "<strong>2. 逻辑反转:</strong> 逻辑门的基础。" },
-                    { img: "img/redstone_freq.png", text: "<strong>3. 高频红石:</strong> 利用侦测器的特性让两个侦测器互相发出信号达到此效果。" },
-                    { img: "img/redstone_signal.png", text: "<strong>4. 单一性:</strong> 红石粉连接红石方块时，只有直接连接会传递红石信号。" }
-                ]
-            },
-            "2.1 隐藏物品器": {
-                category: "Level 2: Factory",
-                title: "方块置换式隐藏装置",
-                color: "#4ade80",
-                steps: [{ 
-                    img: "img/hide-item.png", 
-                    text: `
-                        <div style="border: 1px solid #4ade80; background: rgba(74,222,128,0.1); padding: 15px; border-radius: 8px;">
-                            <p style="margin-bottom: 10px;"><strong>原理深度解析：</strong> 本装置利用粘性活塞的复合推拉逻辑。通过红石信号同时激活垂直与水平方向的活塞组，实现地面方块与下方隐藏容器的瞬间位置交换。当信号切断时，活塞回弹，地表恢复平整，从而达到完美隐藏物资的效果。</p>
-                            <strong>面包批注：</strong> 
-                            1. 这是最基础的隐藏逻辑，适用于任何平整的地表或墙面。<br>
-                            2. <strong>注意点：</strong> 确保活塞推拉的方块属于可移动属性，且电路布线不要干扰到周围的装饰方块。上方的泥土方块可以替换为任意可推动的方块。<br>
-                            <span style="color: #9ca3af; font-size: 0.9em;">（图片仅展示结构逻辑，具体样子玩家可自行修改。如有不符，以文字为准）</span>
-                            <hr style="border-color: rgba(74,222,128,0.3); margin: 10px 0;">
-                            <div style="text-align: center;">
-                                <a href="blueprints/隐藏物品器.litematic" download style="display: inline-block; background: #4ade80; color: #000; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold;">💾 下载 Litematic 图纸</a>
-                            </div>
-                        </div>
-                    ` 
-                }]
-            },
-            "2.2 半自动农场": {
-                category: "Level 2: Factory",
-                title: "大规模水流式半自动农场",
-                color: "#4ade80",
-                steps: [{ 
-                    img: "img/wheat_farm.png", 
-                    text: `
-                        <div style="border: 1px solid #4ade80; background: rgba(74,222,128,0.1); padding: 15px; border-radius: 8px;">
-                            <p style="margin-bottom: 10px;"><strong>原理深度解析：</strong> 本系统利用发射器（Dispenser）内置水桶，在接收到红石脉冲后瞬间释放水流。水流通过流体更新算法，将成熟作物从耕地上“震落”变为掉落物实体。随后，利用水流的推进力将散落的资源统一冲刷至底部的收集槽（漏斗链），实现一键收割。</p>
-                            <strong>面包批注：</strong> 
-                            1. 这是生存初期的“财富密码”，建议配合简单的时钟电路（Clock Circuit）实现收割后自动关水。<br>
-                            2. <strong>避坑指南：</strong> 务必在水流路径上方覆盖玻璃或其他透明方块，防止作物在冲刷过程中因物理碰撞飞溅到耕地之外，造成资源浪费。<br>
-                            <span style="color: #9ca3af; font-size: 0.9em;">（图片仅展示结构逻辑，具体样子玩家可自行修改。如有不符，以文字为准）</span>
-                            <hr style="border-color: rgba(74,222,128,0.3); margin: 10px 0;">
-                            <div style="text-align: center;">
-                                <a href="blueprints/半自动农场.litematic" download style="display: inline-block; background: #4ade80; color: #000; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold;">💾 下载 Litematic 图纸</a>
-                            </div>
-                        </div>
-                    ` 
-                }]
-            },
-            "2.3 全自动甘蔗机": {
-                category: "Level 2: Factory",
-                title: "观察者式全自动甘蔗收割机",
-                color: "#4ade80",
-                steps: [{ 
-                    img: "img/sugarcane_machine.png", 
-                    text: `
-                        <div style="border: 1px solid #4ade80; background: rgba(74,222,128,0.1); padding: 15px; border-radius: 8px;">
-                            <p style="margin-bottom: 10px;"><strong>原理深度解析：</strong> 本装置基于“非接触式高度监测”逻辑。当甘蔗生长至三格高度时，位于顶层的侦测器会瞬间识别到方块更新。信号穿过支撑方块激活中间层的普通活塞，将甘蔗的第二层及以上部分推断。由于甘蔗底座未被破坏，它会继续循环生长。</p>
-                            <strong>面包批注：</strong> 
-                            1. 这是火箭燃料（纸）的核心来源，建议采取“多模块并联”排布。<br>
-                            2. <strong>进阶技巧：</strong> 在甘蔗根部下方使用“漏斗矿车”进行全局收集，效率远高于普通漏斗。<br>
-                            <span style="color: #9ca3af; font-size: 0.9em;">（图片仅展示结构逻辑，具体样子玩家可自行修改。如有不符，以文字为准）</span>
-                            <hr style="border-color: rgba(74,222,128,0.3); margin: 10px 0;">
-                            <div style="text-align: center;">
-                                <a href="blueprints/全自动甘蔗机.litematic" download style="display: inline-block; background: #4ade80; color: #000; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold;">💾 下载 Litematic 图纸</a>
-                            </div>
-                        </div>
-                    ` 
-                }]
-            },
-            "3.1 2x2活塞门": { 
-                category: "Level 3: Intermediate",
-                title: "2x2 标准内吸式隐藏门",
-                color: "#FFD700",
-                steps: [{ 
-                    img: "img/piston_door.png", 
-                    text: `
-                        <div style="border: 1px solid #FFD700; background: rgba(255,215,0,0.1); padding: 15px; border-radius: 8px;">
-                            <p style="margin-bottom: 10px;"><strong>原理深度解析：</strong> 经典的“内吸式（Jeb Door）”结构。它通过两组粘性活塞的复合联动实现：第一组活塞负责将门面方块向内拉动，第二组活塞则负责将门面整体向两侧侧移。利用中继器调节延时实现完美平齐。</p>
-                            <strong>面包批注：</strong> 
-                            1. 红石美学的入门之作。不仅可以装在基地入口，还可以藏在图书馆的书架后面做暗室。<br>
-                            2. <strong>技术重点：</strong> 注意布线的对称性。如果两侧开启时间不统一，视觉上会非常别扭。<br>
-                            <span style="color: #9ca3af; font-size: 0.9em;">（图片仅展示结构逻辑，具体样子玩家可自行修改。如有不符，以文字为准）</span>
-                            <hr style="border-color: rgba(255,215,0,0.3); margin: 10px 0;">
-                            <div style="text-align: center;">
-                                <a href="blueprints/2x2活塞门.litematic" download style="display: inline-block; background: #FFD700; color: #000; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold;">💾 下载 Litematic 图纸</a>
-                            </div>
-                        </div>
-                    ` 
-                }]
-            },
-            "3.2 自动刷石机": {
-                category: "Level 3: Intermediate",
-                title: "高频防损式全自动炸石机",
-                color: "#FFD700",
-                steps: [{ 
-                    img: "img/stone_generator.png", 
-                    text: `
-                        <div style="border: 1px solid #FFD700; background: rgba(255,215,0,0.1); padding: 15px; border-radius: 8px;">
-                            <p style="margin-bottom: 10px;"><strong>原理深度解析：</strong> 该装置利用水与岩浆接触生成圆石。通过高频红石时钟控制顶部的 TNT 复制机构，在特定高度引爆瞬间将圆石转化为掉落物，并由底部的漏斗阵列回收。</p>
-                            <strong>面包批注：</strong> 
-                            1. <strong>安全核心：</strong> 水坑的设计不仅是为了刷石，更是为了吸收 TNT 的爆炸冲击波，防止机器炸膛。使用红石火把塔传输信号确保逻辑通畅。<br>
-                            2. <strong>效率调优：</strong> 调整中继器延迟，让 TNT 落下频率刚好匹配圆石生成速度。避免了同时出现2个TNT互相爆炸的情况。<br>
-                            <span style="color: #9ca3af; font-size: 0.9em;">（图片仅展示结构逻辑，具体样子玩家可自行修改。如有不符，以文字为准）
-                            <hr style="border-color: rgba(255,215,0,0.3); margin: 10px 0;">
-                            <div style="text-align: center;">
-                                <a href="blueprints/全自动刷石机.litematic" download style="display: inline-block; background: #FFD700; color: #000; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold;">💾 下载 Litematic 图纸</a>
-                            </div>
-                        </div>
-                    ` 
-                }]
-            },
-            "3.3 盾构机": {
-                category: "Level 3: Intermediate",
-                title: "音符盒受控式盾构机",
-                color: "#FFD700",
-                steps: [{ 
-                    img: "img/dungouji.png", 
-                    text: `
-                        <div style="border: 1px solid #FFD700; background: rgba(255,215,0,0.1); padding: 15px; border-radius: 8px;">
-                            <p style="margin-bottom: 10px;"><strong>原理深度解析：</strong> 利用音符盒更新触发侦测器，立即激活推进活塞组。通过活塞间的逻辑时序，带动前端的TNT复制机构进行水平位移，实现精准的手动步进效果。</p>
-                            <strong>面包批注：</strong> 
-                            1. 受控式更适合处理复杂地层。遇到水坑或黑曜石时，能立刻收手避免机器损毁。<br>
-                            2. <strong>致命提醒：</strong> 启动前必须观察前方是否有流水，防止 TNT 在水中引爆导致回弹炸毁机器。<br>
-                            <span style="color: #9ca3af; font-size: 0.9em;">（图片仅展示结构逻辑，具体样子玩家可自行修改。如有不符，以文字为准）</span>
-                            <hr style="border-color: rgba(255,215,0,0.3); margin: 10px 0;">
-                            <div style="text-align: center;">
-                                <a href="blueprints/盾构机.litematic" download style="display: inline-block; background: #FFD700; color: #000; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold;">💾 下载 Litematic 图纸</a>
-                            </div>
-                        </div>
-                    ` 
-                }]
-            },
-            "4.1 3x3螺旋门": {
-                category: "Level 4: Advanced",
-                title: "3x3 螺旋开启式机械门",
-                color: "#00D4FF",
-                steps: [{ 
-                    img: "img/Spiral_Door.png", 
-                    text: `
-                        <div style="border: 1px solid #00D4FF; background: rgba(0,212,255,0.1); padding: 15px; border-radius: 8px;">
-                            <p style="margin-bottom: 10px;"><strong>原理深度解析：</strong> 需利用底部的“二级递归（Double Piston Extender）”结构。通过及其精确的中继器刻数控制，在门开启时收回中心方块。四周方块则按照螺旋顺序依次收回。</p>
-                            <strong>面包批注：</strong> 
-                            1. 这种门的结构复杂且极其吃时序。稍微调错一个中继器档位，整个门就会因为方块没收回而卡死。<br>
-                            2. <strong>建议：</strong> 初次搭建一定要开着 Litematic 的投影模式对照逻辑电路部分。<br>
-                            <span style="color: #9ca3af; font-size: 0.9em;">（图片仅展示结构逻辑，具体样子玩家可自行修改。如有不符，以文字为准）</span>
-                            <hr style="border-color: rgba(0,212,255,0.3); margin: 10px 0;">
-                            <div style="text-align: center;">
-                                <a href="blueprints/3x3螺旋门.litematic" download style="display: inline-block; background: #00D4FF; color: #000; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold;">💾 下载 Litematic 图纸</a>
-                            </div>
-                        </div>
-                    ` 
-                }]
-            },
-            "4.2 垂直飞行器": {
-                category: "Level 4: Advanced",
-                title: "单向垂直升降引擎",
-                color: "#00D4FF",
-                steps: [{ 
-                    img: "img/vertical_flyer.png", 
-                    text: `
-                        <div style="border: 1px solid #00D4FF; background: rgba(0,212,255,0.1); padding: 15px; border-radius: 8px;">
-                            <p><strong>原理分析：</strong> 利用观察者面朝下捕捉更新。当底部更新时，观察者激活顶部的粘性活塞，将整个机身（含粘性块）向上拉动。随后下方活塞跟进，完成单向循环。</p>
-                            <strong>面包批注：</strong> 
-                            1. 非常适合做全自动电梯或顶层轰炸机的上升部分。<br>
-                            2. <strong>注意：</strong> 顶端一定要有“不可移动方块”挡住，否则它会一直飞到高度上限。<br>
-                            <span style="color: #9ca3af; font-size: 0.9em;">（图片仅展示结构逻辑，具体样子玩家可自行修改。如有不符，以文字为准）</span>
-                            <hr style="border-color: rgba(0,212,255,0.3); margin: 10px 0;">
-                            <div style="text-align: center;">
-                                <a href="blueprints/垂直飞行器.litematic" download style="display: inline-block; background: #00D4FF; color: #000; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold;">💾 下载 Litematic 图纸</a>
-                            </div>
-                        </div>
-                    ` 
-                }]
-            };
-        
-            function openPage(category, subItems = null, customTitle = null) {
-                const home = document.getElementById('home-page');
-                const detail = document.getElementById('detail-page');
-                const container = document.getElementById('sub-blocks-container');
-                let data = subItems ? { title: customTitle, items: subItems } : contentData[category];
-                  
-                container.innerHTML = '';
-                document.getElementById('detail-title').innerText = data.title;
-                  
-                data.items.forEach(item => {
-                const block = document.createElement('div');
-                block.className = 'glass-card p-6 rounded-2xl text-center font-bold text-stone-700 hover:text-stone-900 cursor-pointer transition-all active:scale-95';
-                block.innerText = itemName;
-                block.onclick = (e) => {
-                e.stopPropagation();
-                if (typeof item === 'object' && item.subItems)
-                    openPage(null, item.subItems, item.name);
-                else if (tacticalData[itemName])
-                    showTactical(tacticalData[itemName]);
-                else
-                    alert("【" + itemName + "】正在努力烤制中...");
-                };
-                container.appendChild(block);
-                });
-                
-                // 切换页面
-                home.classList.remove('visible-page');
-                home.classList.add('hidden-page');
-                  
-                setTimeout(() => {
-                detail.classList.remove('hidden-page');
-                detail.classList.add('visible-page');
-                }, 50);
-            }
-                
-            function showTactical(data) {
-                const overlay = document.getElementById('article-overlay');
-                const catEl = document.getElementById('article-category');
-                catEl.innerText = data.category;
-                catEl.style.color = data.color || "#f97316";
-                document.getElementById('article-title').innerText = data.title;
-                  
-                const container = document.getElementById('article-content');
-                container.innerHTML = data.steps.map(step => `
-                <div class="tutorial-step">
-                <div class="image-container"><img src="${step.img}" onerror="this.src='https://via.placeholder.com/480x270?text=Wait+for+Screenshot'"></div>
-                <div class="flex-grow px-4 text-stone-300 leading-relaxed text-xl">${step.text}</div>
-                </div>
-                  `).join('');
-                
-                  overlay.classList.remove('hidden-page');
-                  overlay.classList.add('visible-page');
-                }
-                
-                function closeArticle() {
-                  const overlay = document.getElementById('article-overlay');
-                  overlay.classList.remove('visible-page');
-                  overlay.classList.add('hidden-page');
-                }
-                
-                function backToHome(e) {
-                  if(e) e.stopPropagation();
-                  const home = document.getElementById('home-page');
-                  const detail = document.getElementById('detail-page');
-                  
-                  detail.classList.remove('visible-page');
-                  detail.classList.add('hidden-page');
-                  
-                  setTimeout(() => {
-                    home.classList.remove('hidden-page');
-                    home.classList.add('visible-page');
-                  }, 50);
-                }
+    hide('home-page');
+    show('detail-page');
+}
 
-        const bt = ['🍞', '🥐', '🥖', '🥨', '🥯', '🧸'];
-        document.addEventListener('mousedown', (e) => {
-            for (let i = 0; i < 6; i++) {
-                const el = document.createElement('div'); el.className = 'bread-emoji'; el.innerText = bt[Math.floor(Math.random()*bt.length)]; document.body.appendChild(el);
-                let px = e.clientX, py = e.clientY, cvx = (Math.random()-0.5)*15, cvy = (Math.random()-0.5)*15, op = 1;
-                function a() { px+=cvx; py+=cvy; cvy+=0.5; op-=0.02; el.style.left=px+'px'; el.style.top=py+'px'; el.style.opacity=op; if(op>0) requestAnimationFrame(a); else el.remove(); }
-                requestAnimationFrame(a);
-            }
-        });
-    </script>
+function showTactical(data) {
+    document.getElementById('article-category').innerText = data.category;
+    document.getElementById('article-category').style.color = data.color || "#f97316";
+    document.getElementById('article-title').innerText = data.title;
+    document.getElementById('article-content').innerHTML = data.steps.map(s => `
+        <div class="tutorial-step">
+            <div class="image-container"><img src="${s.img}" onerror="this.src='https://via.placeholder.com/480x270?text=Wait+for+Screenshot'"></div>
+            <div class="flex-grow px-4 text-stone-300 text-xl">${s.text}</div>
+        </div>
+    `).join('');
+    show('article-overlay');
+}
+
+function closeArticle() { hide('article-overlay'); }
+function backToHome() { hide('detail-page'); show('home-page'); }
+
+// 面包特效
+const bt = ['🍞','🥐','🥖','🥨','🥯','🧸'];
+document.addEventListener('mousedown', e => {
+    for(let i=0;i<6;i++){
+        const el=document.createElement('div');
+        el.className='bread-emoji';
+        el.textContent=bt[Math.random()*bt.length|0];
+        document.body.append(el);
+        let x=e.x,y=e.y,vx=(Math.random()-.5)*15,vy=(Math.random()-.5)*15,o=1;
+        (function f(){
+            x+=vx; y+=vy+0.5; o-=0.02;
+            el.style.left=x+'px'; el.style.top=y+'px'; el.style.opacity=o;
+            o>0 ? requestAnimationFrame(f) : el.remove();
+        })();
+    }
+});
+</script>
 </body>
 </html>
