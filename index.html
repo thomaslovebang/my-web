@@ -322,91 +322,79 @@
                 }]
             };
         
-        function openPage(category, subItems = null, customTitle = null) {
-            const home = document.getElementById('home-page');
-            const detail = document.getElementById('detail-page');
-            const container = document.getElementById('sub-blocks-container');
-            let data = subItems ? { title: customTitle, items: subItems } : contentData[category];
-            container.innerHTML = '';
-            document.getElementById('detail-title').innerText = data.title;
-            data.items.forEach(item => {
+            function openPage(category, subItems = null, customTitle = null) {
+                const home = document.getElementById('home-page');
+                const detail = document.getElementById('detail-page');
+                const container = document.getElementById('sub-blocks-container');
+                let data = subItems ? { title: customTitle, items: subItems } : contentData[category];
+                  
+                container.innerHTML = '';
+                document.getElementById('detail-title').innerText = data.title;
+                  
+                data.items.forEach(item => {
                 const block = document.createElement('div');
                 block.className = 'glass-card p-6 rounded-2xl text-center font-bold text-stone-700 hover:text-stone-900 cursor-pointer transition-all active:scale-95';
-                const itemName = typeof item === 'object' ? item.name : item;
                 block.innerText = itemName;
                 block.onclick = (e) => {
-                    e.stopPropagation();
-                    if (typeof item === 'object' && item.subItems) openPage(null, item.subItems, item.name);
-                    else if (tacticalData[itemName]) showTactical(tacticalData[itemName]);
-                    else alert("【" + itemName + "】正在努力烤制中...");
+                e.stopPropagation();
+                if (typeof item === 'object' && item.subItems)
+                    openPage(null, item.subItems, item.name);
+                else if (tacticalData[itemName])
+                    showTactical(tacticalData[itemName]);
+                else
+                    alert("【" + itemName + "】正在努力烤制中...");
                 };
                 container.appendChild(block);
-            });
-            
-            // 修复：分步切换样式，先隐藏视觉，再隐藏显示
-            home.style.opacity = '0';
-            setTimeout(() => { 
-                home.classList.add('hidden-page'); 
-                // 显示详情页：先移除 display:none，再恢复 pointer-events 和透明度
-                detail.classList.remove('hidden-display');
+                });
+                
+                // 切换页面
+                home.classList.remove('visible-page');
+                home.classList.add('hidden-page');
+                  
                 setTimeout(() => {
-                    detail.classList.remove('hidden-page');
-                    detail.style.opacity = '1';
-                    detail.style.transform = 'translateY(0)';
+                detail.classList.remove('hidden-page');
+                detail.classList.add('visible-page');
                 }, 50);
-            }, 400);
-        }
-
-        function showTactical(data) {
-            const overlay = document.getElementById('article-overlay');
-            const catEl = document.getElementById('article-category');
-            catEl.innerText = data.category;
-            catEl.style.color = data.color || "#f97316"; 
-            document.getElementById('article-title').innerText = data.title;
-            const container = document.getElementById('article-content');
-            container.innerHTML = data.steps.map(step => `
+            }
+                
+            function showTactical(data) {
+                const overlay = document.getElementById('article-overlay');
+                const catEl = document.getElementById('article-category');
+                catEl.innerText = data.category;
+                catEl.style.color = data.color || "#f97316";
+                document.getElementById('article-title').innerText = data.title;
+                  
+                const container = document.getElementById('article-content');
+                container.innerHTML = data.steps.map(step => `
                 <div class="tutorial-step">
-                    <div class="image-container"><img src="${step.img}" onerror="this.src='https://via.placeholder.com/480x270?text=Wait+for+Screenshot'"></div>
-                    <div class="flex-grow px-4 text-stone-300 leading-relaxed text-xl">${step.text}</div>
+                <div class="image-container"><img src="${step.img}" onerror="this.src='https://via.placeholder.com/480x270?text=Wait+for+Screenshot'"></div>
+                <div class="flex-grow px-4 text-stone-300 leading-relaxed text-xl">${step.text}</div>
                 </div>
-            `).join('');
-            
-            // 修复：分步显示弹窗
-            overlay.classList.remove('hidden-display');
-            setTimeout(() => {
-                overlay.classList.remove('hidden-page');
-                overlay.style.opacity = '1';
-            }, 50);
-        }
-
-        function closeArticle() {
-            const overlay = document.getElementById('article-overlay');
-            overlay.style.opacity = '0';
-            setTimeout(() => { 
-                overlay.classList.add('hidden-page');
-                // 延迟添加 display:none，确保过渡动画完成
-                setTimeout(() => {
-                    overlay.classList.add('hidden-display');
-                }, 100);
-            }, 400);
-        }
-
-        function backToHome(e) {
-            if(e) e.stopPropagation();
-            const home = document.getElementById('home-page');
-            const detail = document.getElementById('detail-page');
-            detail.style.opacity = '0';
-            setTimeout(() => { 
-                detail.classList.add('hidden-page');
-                // 延迟添加 display:none，确保过渡动画完成
-                setTimeout(() => {
-                    detail.classList.add('hidden-display');
-                }, 100);
-                // 显示主页
-                home.classList.remove('hidden-page');
-                home.style.opacity = '1';
-            }, 400);
-        }
+                  `).join('');
+                
+                  overlay.classList.remove('hidden-page');
+                  overlay.classList.add('visible-page');
+                }
+                
+                function closeArticle() {
+                  const overlay = document.getElementById('article-overlay');
+                  overlay.classList.remove('visible-page');
+                  overlay.classList.add('hidden-page');
+                }
+                
+                function backToHome(e) {
+                  if(e) e.stopPropagation();
+                  const home = document.getElementById('home-page');
+                  const detail = document.getElementById('detail-page');
+                  
+                  detail.classList.remove('visible-page');
+                  detail.classList.add('hidden-page');
+                  
+                  setTimeout(() => {
+                    home.classList.remove('hidden-page');
+                    home.classList.add('visible-page');
+                  }, 50);
+                }
 
         const bt = ['🍞', '🥐', '🥖', '🥨', '🥯', '🧸'];
         document.addEventListener('mousedown', (e) => {
