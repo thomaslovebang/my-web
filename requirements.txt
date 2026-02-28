@@ -1,0 +1,39 @@
+# 数据采集
+tushare>=1.2.89
+akshare>=1.12.0
+yfinance>=0.2.28
+httpx>=0.25.0
+feedparser>=6.0.10
+newspaper3k>=0.2.8
+
+# 数据存储
+duckdb>=0.9.0
+pandas>=2.0.0
+numpy>=1.24.0
+pyarrow>=14.0.0
+
+# NLP / GPU推理
+torch>=2.1.0
+transformers>=4.40.0
+vllm>=0.4.0
+accelerate>=0.24.0
+sentencepiece>=0.1.99
+
+# 量化建模
+lightgbm>=4.0.0
+scikit-learn>=1.3.0
+scipy>=1.11.0
+statsmodels>=0.14.0
+
+# 报告与邮件
+plotly>=5.17.0
+jinja2>=3.1.2
+weasyprint>=60.0
+
+# 调度与工具
+APScheduler>=3.10.0
+loguru>=0.7.0
+pydantic>=2.0.0
+tqdm>=4.66.0
+python-dotenv>=1.0.0
+pytest>=7.4.0
