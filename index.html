@@ -375,32 +375,42 @@ function showTactical(data) {
 function closeArticle() { hide('article-overlay'); }
 function backToHome() { hide('detail-page'); show('home-page'); }
 
-// 🥖 调慢速度后的面包点击特效
+// 🥖 豪华版：高产量、低速飘落的面包喷泉
 const bt = ['🍞','🥐','🥖','🥨','🥯','🧸'];
 document.addEventListener('mousedown', e => {
-    for(let i=0; i<6; i++){
+    // 📈 数量从 6 增加到了 15，满屏都是面包！
+    for(let i=0; i<11; i++){
         const el = document.createElement('div');
         el.className = 'bread-emoji';
         el.textContent = bt[Math.random() * bt.length | 0];
+        
+        // ✨ 新增：让面包大小随机（30px - 50px），看起来更像立体喷发
+        el.style.fontSize = (Math.random() * 20 + 30) + 'px';
+        
         document.body.append(el);
         
-        // 📉 调整：把 15 改成了 8（初速度减半），让爆发更柔和
+        // 📉 速度保持柔和，vx/vy 控制在 10 以内
         let x = e.clientX, 
             y = e.clientY, 
-            vx = (Math.random() - .5) * 8, 
-            vy = (Math.random() - .5) * 8, 
-            o = 1;
-        
+            vx = (Math.random() - .5) * 10, 
+            vy = (Math.random() - .5) * 10, 
+            o = 1,
+            // 🔄 新增：给每个面包一个随机旋转速度，更有动感
+            rotation = 0,
+            rv = (Math.random() - .5) * 5;
+
         (function f(){
-            // 🎈 这里的 0.2 是重力，也调小了一点点
-            x += vx; y += vy + 0.2; 
+            // 🎈 物理逻辑：x位移，y位移+微小重力(0.15)
+            x += vx; y += vy + 0.15; 
+            rotation += rv;
             
-            // ⏳ 调整：从 0.02 改成 0.012，面包在屏幕上停留的时间会变长
-            o -= 0.012; 
+            // ⏳ 消失速度：0.01 让它在屏幕上飘得更久
+            o -= 0.01; 
             
             el.style.left = x + 'px'; 
             el.style.top = y + 'px'; 
             el.style.opacity = o;
+            el.style.transform = `translate(-50%, -50%) rotate(${rotation}deg)`;
             
             o > 0 ? requestAnimationFrame(f) : el.remove();
         })();
