@@ -6,11 +6,19 @@
     <title>eatenbread.com | 核心教学矩阵</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
+        /* 🎨 核心指针修改：强制全局使用你的 cur.cur */
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
             background: radial-gradient(circle, #fff3e0 0%, #ffcc80 60%, #ef6c00 100%);
             font-family: 'Segoe UI', system-ui, sans-serif;
             user-select: none;
+            /* 👇 你的文件 */
+            cursor: url('cur.cur'), auto;
+        }
+        
+        /* 🛡️ 关键：防止鼠标移到按钮或卡片时变回默认指针 */
+        a, button, .glass-card, .cursor-pointer, input, [onclick] {
+            cursor: url('cur.cur'), pointer !important;
         }
         .glass-card {
             background: rgba(255, 255, 255, 0.1);
@@ -368,18 +376,22 @@ function closeArticle() { hide('article-overlay'); }
 function backToHome() { hide('detail-page'); show('home-page'); }
 
 // 面包特效
+// 🥖 优化后的面包点击特效
 const bt = ['🍞','🥐','🥖','🥨','🥯','🧸'];
 document.addEventListener('mousedown', e => {
-    for(let i=0;i<6;i++){
-        const el=document.createElement('div');
-        el.className='bread-emoji';
-        el.textContent=bt[Math.random()*bt.length|0];
+    for(let i=0; i<6; i++){
+        const el = document.createElement('div');
+        el.className = 'bread-emoji';
+        el.textContent = bt[Math.random() * bt.length | 0];
         document.body.append(el);
-        let x=e.x,y=e.y,vx=(Math.random()-.5)*15,vy=(Math.random()-.5)*15,o=1;
+        
+        // 使用 clientX/Y 确保坐标在不同缩放下的准确性
+        let x = e.clientX, y = e.clientY, vx = (Math.random() - .5) * 15, vy = (Math.random() - .5) * 15, o = 1;
+        
         (function f(){
-            x+=vx; y+=vy+0.5; o-=0.02;
-            el.style.left=x+'px'; el.style.top=y+'px'; el.style.opacity=o;
-            o>0 ? requestAnimationFrame(f) : el.remove();
+            x += vx; y += vy + 0.5; o -= 0.02;
+            el.style.left = x + 'px'; el.style.top = y + 'px'; el.style.opacity = o;
+            o > 0 ? requestAnimationFrame(f) : el.remove();
         })();
     }
 });
