@@ -378,8 +378,8 @@ function backToHome() { hide('detail-page'); show('home-page'); }
 // 🥖 豪华版：高产量、低速飘落的面包喷泉
 const bt = ['🍞','🥐','🥖','🥨','🥯','🧸'];
 document.addEventListener('mousedown', e => {
-    // 📈 数量从 6 增加到了 15，满屏都是面包！
-    for(let i=0; i<11; i++){
+    // 📈 数量从 6 增加到了 8，满屏都是面包！
+    for(let i=0; i<8; i++){
         const el = document.createElement('div');
         el.className = 'bread-emoji';
         el.textContent = bt[Math.random() * bt.length | 0];
