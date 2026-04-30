@@ -55,6 +55,43 @@
             .image-container { max-width: 100%; height: 200px; }
         }
         .no-scrollbar::-webkit-scrollbar { display: none; }
+        /* 密码弹窗样式 */
+        .password-modal {
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(12px);
+        }
+        .password-input {
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,215,0,0.5);
+            color: white;
+        }
+        .password-input:focus {
+            outline: none;
+            border-color: #f97316;
+            box-shadow: 0 0 10px rgba(249,115,22,0.3);
+        }
+        .admin-glass {
+            background: rgba(20, 20, 30, 0.85);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,215,0,0.4);
+            box-shadow: 0 25px 40px rgba(0,0,0,0.3);
+        }
+        .feedback-item {
+            background: rgba(255,255,240,0.1);
+            border-left: 4px solid #f97316;
+            transition: all 0.2s;
+            padding: 12px;
+            margin-bottom: 8px;
+            border-radius: 12px;
+        }
+        .feedback-item:hover {
+            background: rgba(255,255,240,0.2);
+            transform: translateX(4px);
+        }
+        .admin-badge {
+            background: #ef6c00;
+            box-shadow: 0 0 8px rgba(239,108,0,0.6);
+        }
     </style>
 </head>
 <body class="overflow-x-hidden">
@@ -422,31 +459,180 @@ document.addEventListener('mousedown', e => {
         })();
     }
 });
-    // 建议箱提交逻辑
+// ======================= 🔐 后台管理系统 =======================
+
+// 初始化存储
+if (!localStorage.getItem('admin_password')) {
+    localStorage.setItem('admin_password', 'admin123');
+}
+if (!localStorage.getItem('feedbacks')) {
+    localStorage.setItem('feedbacks', JSON.stringify([]));
+}
+
+// 获取元素
+const passwordModal = document.getElementById('password-modal');
+const adminDashboard = document.getElementById('admin-dashboard');
+const homePage = document.getElementById('home-page');
+
+// 后台入口按钮事件
+const adminTrigger = document.getElementById('secret-admin-trigger');
+if (adminTrigger) {
+    adminTrigger.addEventListener('click', function() {
+        passwordModal.classList.remove('hidden');
+        document.getElementById('admin-password-input').value = '';
+        document.getElementById('password-error').classList.add('hidden');
+    });
+}
+
+// 密码提交
+document.getElementById('password-submit-btn')?.addEventListener('click', function() {
+    const inputPwd = document.getElementById('admin-password-input').value;
+    const correctPwd = localStorage.getItem('admin_password');
+    
+    if (inputPwd === correctPwd) {
+        passwordModal.classList.add('hidden');
+        renderAdminPanel();
+        adminDashboard.classList.remove('hidden');
+        homePage.classList.add('hidden');
+    } else {
+        document.getElementById('password-error').classList.remove('hidden');
+    }
+});
+
+document.getElementById('password-cancel-btn')?.addEventListener('click', function() {
+    passwordModal.classList.add('hidden');
+});
+
+document.getElementById('admin-password-input')?.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') document.getElementById('password-submit-btn').click();
+});
+
+// 关闭后台
+document.getElementById('close-admin-btn')?.addEventListener('click', function() {
+    adminDashboard.classList.add('hidden');
+    homePage.classList.remove('hidden');
+});
+
+// 渲染反馈列表
+function renderAdminPanel() {
+    const feedbacks = JSON.parse(localStorage.getItem('feedbacks') || '[]');
+    const container = document.getElementById('admin-feedback-list');
+    const totalSpan = document.getElementById('total-feedback-count');
+    
+    totalSpan.innerText = feedbacks.length;
+    
+    if (feedbacks.length === 0) {
+        container.innerHTML = '<div class="text-center py-12 text-amber-300/60 italic">✨ 暂无反馈 ✨</div>';
+        return;
+    }
+    
+    container.innerHTML = feedbacks.slice().reverse().map((fb, idx) => `
+        <div class="feedback-item">
+            <div class="flex justify-between items-start">
+                <div class="flex-1">
+                    <div class="text-amber-300 text-sm mb-1">📝 ${fb.time}</div>
+                    <div class="text-white text-base break-words">${escapeHtml(fb.content)}</div>
+                </div>
+                <button onclick="deleteFeedback(${feedbacks.length - 1 - idx})" class="text-stone-500 hover:text-red-400 ml-3 text-xl leading-5">🗑️</button>
+            </div>
+        </div>
+    `).join('');
+}
+
+// 删除单条
+window.deleteFeedback = function(index) {
+    let feedbacks = JSON.parse(localStorage.getItem('feedbacks') || '[]');
+    feedbacks.splice(index, 1);
+    localStorage.setItem('feedbacks', JSON.stringify(feedbacks));
+    renderAdminPanel();
+};
+
+// 清空全部
+document.getElementById('clear-all-feedback-btn')?.addEventListener('click', function() {
+    if (confirm('⚠️ 确定要清空所有反馈吗？')) {
+        localStorage.setItem('feedbacks', JSON.stringify([]));
+        renderAdminPanel();
+        alert('✅ 已清空');
+    }
+});
+
+// 刷新
+document.getElementById('refresh-admin-btn')?.addEventListener('click', function() {
+    renderAdminPanel();
+});
+
+// 修改密码
+document.getElementById('change-password-btn')?.addEventListener('click', function() {
+    const oldPwd = prompt('请输入当前密码：');
+    const currentPwd = localStorage.getItem('admin_password');
+    
+    if (oldPwd !== currentPwd) {
+        alert('❌ 当前密码错误！');
+        return;
+    }
+    
+    const newPwd = prompt('请输入新密码（至少4位）：');
+    if (newPwd && newPwd.length >= 4) {
+        localStorage.setItem('admin_password', newPwd);
+        alert('✅ 密码修改成功！新密码：' + newPwd);
+    } else if (newPwd) {
+        alert('❌ 密码长度至少4位');
+    }
+});
+
+// HTML转义
+function escapeHtml(str) {
+    return str.replace(/[&<>]/g, function(m) {
+        if (m === '&') return '&amp;';
+        if (m === '<') return '&lt;';
+        if (m === '>') return '&gt;';
+        return m;
+    });
+}
+
+// ======================= 建议箱提交逻辑 =======================
 document.getElementById('suggestion-form').addEventListener('submit', function(e) {
     e.preventDefault();
-    const text = document.getElementById('suggestion-text').value;
+    const text = document.getElementById('suggestion-text').value.trim();
     
-    if(text.trim()) {
-        // 1. 这里你可以之后对接后台，现在先弹个窗
-        alert("收到建议！面包正在加速烘焙中...");
+    if(text) {
+        // 保存反馈
+        const feedbacks = JSON.parse(localStorage.getItem('feedbacks') || '[]');
+        const now = new Date();
+        const timeStr = `${now.getFullYear()}-${now.getMonth()+1}-${now.getDate()} ${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}:${now.getSeconds().toString().padStart(2,'0')}`;
+        feedbacks.push({ content: text, time: timeStr });
+        localStorage.setItem('feedbacks', JSON.stringify(feedbacks));
         
-        // 2. 联动你的特效：在提交按钮位置喷发一波面包！
+        alert("✅ 收到建议！");
+        
+        // 面包特效
         const btnRect = e.target.querySelector('button').getBoundingClientRect();
-        const fakeEvent = { 
-            clientX: btnRect.left + btnRect.width / 2, 
-            clientY: btnRect.top + btnRect.height / 2 
-        };
-        
-        // 连喷三次，庆祝一下
+        const fakeEvent = { clientX: btnRect.left + btnRect.width / 2, clientY: btnRect.top + btnRect.height / 2 };
         for(let i=0; i<3; i++) {
-            setTimeout(() => {
-                document.dispatchEvent(new MouseEvent('mousedown', fakeEvent));
-            }, i * 100);
+            setTimeout(() => { document.dispatchEvent(new MouseEvent('mousedown', fakeEvent)); }, i * 100);
         }
-
-        // 3. 清空输入框
+        
         document.getElementById('suggestion-text').value = '';
+    }
+});
+
+// 保留原有的面包喷泉特效
+const bt = ['🍞','🥐','🥖','🥨','🥯','🧸'];
+document.addEventListener('mousedown', e => {
+    for(let i=0; i<8; i++){
+        const el = document.createElement('div');
+        el.className = 'bread-emoji';
+        el.textContent = bt[Math.random() * bt.length | 0];
+        el.style.fontSize = (Math.random() * 20 + 30) + 'px';
+        document.body.append(el);
+        
+        let x = e.clientX, y = e.clientY, vx = (Math.random() - .5) * 10, vy = (Math.random() - .5) * 10, o = 1, rotation = 0, rv = (Math.random() - .5) * 5;
+        (function f(){
+            x += vx; y += vy + 0.15; rotation += rv; o -= 0.02;
+            el.style.left = x + 'px'; el.style.top = y + 'px'; el.style.opacity = o;
+            el.style.transform = `translate(-50%, -50%) rotate(${rotation}deg)`;
+            o > 0 ? requestAnimationFrame(f) : el.remove();
+        })();
     }
 });
 </script>
