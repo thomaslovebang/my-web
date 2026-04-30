@@ -158,7 +158,6 @@
     </div>
 </div>
 
-<script>
 // 👇 你的所有数据 100% 原样不动
 const contentData = {
     survival: { title: "板块一：生存指南", items: [{name:"1. 基础准备", subItems:["1.1 基础工具", "1.2 建筑材料"]}, "2. 饥饿值&血量", "3. 村民贸易", "4. 合理的“外挂”", "5. 下界&末地“通行证”", "6. 高级追求", "7. 全成就"] },
@@ -418,47 +417,6 @@ function showTactical(data) {
 function closeArticle() { hide('article-overlay'); }
 function backToHome() { hide('detail-page'); show('home-page'); }
 
-// 🥖 豪华版：高产量、低速飘落的面包喷泉
-const bt = ['🍞','🥐','🥖','🥨','🥯','🧸'];
-document.addEventListener('mousedown', e => {
-    // 📈 数量从 6 增加到了 8，满屏都是面包！
-    for(let i=0; i<8; i++){
-        const el = document.createElement('div');
-        el.className = 'bread-emoji';
-        el.textContent = bt[Math.random() * bt.length | 0];
-        
-        // ✨ 新增：让面包大小随机（30px - 50px），看起来更像立体喷发
-        el.style.fontSize = (Math.random() * 20 + 30) + 'px';
-        
-        document.body.append(el);
-        
-        // 📉 速度保持柔和，vx/vy 控制在 10 以内
-        let x = e.clientX, 
-            y = e.clientY, 
-            vx = (Math.random() - .5) * 10, 
-            vy = (Math.random() - .5) * 10, 
-            o = 1,
-            // 🔄 新增：给每个面包一个随机旋转速度，更有动感
-            rotation = 0,
-            rv = (Math.random() - .5) * 5;
-
-        (function f(){
-            // 🎈 物理逻辑：x位移，y位移+微小重力(0.15)
-            x += vx; y += vy + 0.15; 
-            rotation += rv;
-            
-            // ⏳ 消失速度：0.01 让它在屏幕上飘得更久
-            o -= 0.02; 
-            
-            el.style.left = x + 'px'; 
-            el.style.top = y + 'px'; 
-            el.style.opacity = o;
-            el.style.transform = `translate(-50%, -50%) rotate(${rotation}deg)`;
-            
-            o > 0 ? requestAnimationFrame(f) : el.remove();
-        })();
-    }
-});
 // ======================= 🔐 后台管理系统 =======================
 
 // 初始化存储
@@ -469,48 +427,143 @@ if (!localStorage.getItem('feedbacks')) {
     localStorage.setItem('feedbacks', JSON.stringify([]));
 }
 
-// 获取元素
-const passwordModal = document.getElementById('password-modal');
-const adminDashboard = document.getElementById('admin-dashboard');
-const homePage = document.getElementById('home-page');
-
-// 后台入口按钮事件
-const adminTrigger = document.getElementById('secret-admin-trigger');
-if (adminTrigger) {
-    adminTrigger.addEventListener('click', function() {
-        passwordModal.classList.remove('hidden');
-        document.getElementById('admin-password-input').value = '';
-        document.getElementById('password-error').classList.add('hidden');
-    });
-}
-
-// 密码提交
-document.getElementById('password-submit-btn')?.addEventListener('click', function() {
-    const inputPwd = document.getElementById('admin-password-input').value;
-    const correctPwd = localStorage.getItem('admin_password');
-    
-    if (inputPwd === correctPwd) {
-        passwordModal.classList.add('hidden');
-        renderAdminPanel();
-        adminDashboard.classList.remove('hidden');
-        homePage.classList.add('hidden');
-    } else {
-        document.getElementById('password-error').classList.remove('hidden');
+// 等待DOM加载完成再绑定事件
+document.addEventListener('DOMContentLoaded', function() {
+    // 后台入口按钮
+    const adminTrigger = document.getElementById('secret-admin-trigger');
+    if (adminTrigger) {
+        adminTrigger.addEventListener('click', function() {
+            const modal = document.getElementById('password-modal');
+            if (modal) modal.classList.remove('hidden');
+            const pwdInput = document.getElementById('admin-password-input');
+            if (pwdInput) pwdInput.value = '';
+            const errorDiv = document.getElementById('password-error');
+            if (errorDiv) errorDiv.classList.add('hidden');
+        });
     }
-});
-
-document.getElementById('password-cancel-btn')?.addEventListener('click', function() {
-    passwordModal.classList.add('hidden');
-});
-
-document.getElementById('admin-password-input')?.addEventListener('keypress', function(e) {
-    if (e.key === 'Enter') document.getElementById('password-submit-btn').click();
-});
-
-// 关闭后台
-document.getElementById('close-admin-btn')?.addEventListener('click', function() {
-    adminDashboard.classList.add('hidden');
-    homePage.classList.remove('hidden');
+    
+    // 密码提交
+    const submitBtn = document.getElementById('password-submit-btn');
+    if (submitBtn) {
+        submitBtn.addEventListener('click', function() {
+            const inputPwd = document.getElementById('admin-password-input').value;
+            const correctPwd = localStorage.getItem('admin_password');
+            
+            if (inputPwd === correctPwd) {
+                const modal = document.getElementById('password-modal');
+                if (modal) modal.classList.add('hidden');
+                renderAdminPanel();
+                const dashboard = document.getElementById('admin-dashboard');
+                const home = document.getElementById('home-page');
+                if (dashboard) dashboard.classList.remove('hidden');
+                if (home) home.classList.add('hidden');
+            } else {
+                const errorDiv = document.getElementById('password-error');
+                if (errorDiv) errorDiv.classList.remove('hidden');
+            }
+        });
+    }
+    
+    // 取消按钮
+    const cancelBtn = document.getElementById('password-cancel-btn');
+    if (cancelBtn) {
+        cancelBtn.addEventListener('click', function() {
+            const modal = document.getElementById('password-modal');
+            if (modal) modal.classList.add('hidden');
+        });
+    }
+    
+    // 回车提交
+    const pwdInput = document.getElementById('admin-password-input');
+    if (pwdInput) {
+        pwdInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                const btn = document.getElementById('password-submit-btn');
+                if (btn) btn.click();
+            }
+        });
+    }
+    
+    // 关闭后台
+    const closeBtn = document.getElementById('close-admin-btn');
+    if (closeBtn) {
+        closeBtn.addEventListener('click', function() {
+            const dashboard = document.getElementById('admin-dashboard');
+            const home = document.getElementById('home-page');
+            if (dashboard) dashboard.classList.add('hidden');
+            if (home) home.classList.remove('hidden');
+        });
+    }
+    
+    // 清空全部
+    const clearBtn = document.getElementById('clear-all-feedback-btn');
+    if (clearBtn) {
+        clearBtn.addEventListener('click', function() {
+            if (confirm('⚠️ 确定要清空所有反馈吗？')) {
+                localStorage.setItem('feedbacks', JSON.stringify([]));
+                renderAdminPanel();
+                alert('✅ 已清空');
+            }
+        });
+    }
+    
+    // 刷新
+    const refreshBtn = document.getElementById('refresh-admin-btn');
+    if (refreshBtn) {
+        refreshBtn.addEventListener('click', function() {
+            renderAdminPanel();
+        });
+    }
+    
+    // 修改密码
+    const changePwdBtn = document.getElementById('change-password-btn');
+    if (changePwdBtn) {
+        changePwdBtn.addEventListener('click', function() {
+            const oldPwd = prompt('请输入当前密码：');
+            const currentPwd = localStorage.getItem('admin_password');
+            
+            if (oldPwd !== currentPwd) {
+                alert('❌ 当前密码错误！');
+                return;
+            }
+            
+            const newPwd = prompt('请输入新密码（至少4位）：');
+            if (newPwd && newPwd.length >= 4) {
+                localStorage.setItem('admin_password', newPwd);
+                alert('✅ 密码修改成功！新密码：' + newPwd);
+            } else if (newPwd) {
+                alert('❌ 密码长度至少4位');
+            }
+        });
+    }
+    
+    // 建议箱提交
+    const form = document.getElementById('suggestion-form');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const text = document.getElementById('suggestion-text').value.trim();
+            
+            if(text) {
+                const feedbacks = JSON.parse(localStorage.getItem('feedbacks') || '[]');
+                const now = new Date();
+                const timeStr = `${now.getFullYear()}-${now.getMonth()+1}-${now.getDate()} ${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}:${now.getSeconds().toString().padStart(2,'0')}`;
+                feedbacks.push({ content: text, time: timeStr });
+                localStorage.setItem('feedbacks', JSON.stringify(feedbacks));
+                
+                alert("✅ 收到建议！");
+                
+                // 面包特效
+                const btnRect = e.target.querySelector('button').getBoundingClientRect();
+                const fakeEvent = { clientX: btnRect.left + btnRect.width / 2, clientY: btnRect.top + btnRect.height / 2 };
+                for(let i=0; i<3; i++) {
+                    setTimeout(() => { document.dispatchEvent(new MouseEvent('mousedown', fakeEvent)); }, i * 100);
+                }
+                
+                document.getElementById('suggestion-text').value = '';
+            }
+        });
+    }
 });
 
 // 渲染反馈列表
@@ -519,7 +572,9 @@ function renderAdminPanel() {
     const container = document.getElementById('admin-feedback-list');
     const totalSpan = document.getElementById('total-feedback-count');
     
-    totalSpan.innerText = feedbacks.length;
+    if (totalSpan) totalSpan.innerText = feedbacks.length;
+    
+    if (!container) return;
     
     if (feedbacks.length === 0) {
         container.innerHTML = '<div class="text-center py-12 text-amber-300/60 italic">✨ 暂无反馈 ✨</div>';
@@ -530,7 +585,7 @@ function renderAdminPanel() {
         <div class="feedback-item">
             <div class="flex justify-between items-start">
                 <div class="flex-1">
-                    <div class="text-amber-300 text-sm mb-1">📝 ${fb.time}</div>
+                    <div class="text-amber-300 text-sm mb-1">📝 ${escapeHtml(fb.time)}</div>
                     <div class="text-white text-base break-words">${escapeHtml(fb.content)}</div>
                 </div>
                 <button onclick="deleteFeedback(${feedbacks.length - 1 - idx})" class="text-stone-500 hover:text-red-400 ml-3 text-xl leading-5">🗑️</button>
@@ -547,39 +602,6 @@ window.deleteFeedback = function(index) {
     renderAdminPanel();
 };
 
-// 清空全部
-document.getElementById('clear-all-feedback-btn')?.addEventListener('click', function() {
-    if (confirm('⚠️ 确定要清空所有反馈吗？')) {
-        localStorage.setItem('feedbacks', JSON.stringify([]));
-        renderAdminPanel();
-        alert('✅ 已清空');
-    }
-});
-
-// 刷新
-document.getElementById('refresh-admin-btn')?.addEventListener('click', function() {
-    renderAdminPanel();
-});
-
-// 修改密码
-document.getElementById('change-password-btn')?.addEventListener('click', function() {
-    const oldPwd = prompt('请输入当前密码：');
-    const currentPwd = localStorage.getItem('admin_password');
-    
-    if (oldPwd !== currentPwd) {
-        alert('❌ 当前密码错误！');
-        return;
-    }
-    
-    const newPwd = prompt('请输入新密码（至少4位）：');
-    if (newPwd && newPwd.length >= 4) {
-        localStorage.setItem('admin_password', newPwd);
-        alert('✅ 密码修改成功！新密码：' + newPwd);
-    } else if (newPwd) {
-        alert('❌ 密码长度至少4位');
-    }
-});
-
 // HTML转义
 function escapeHtml(str) {
     return str.replace(/[&<>]/g, function(m) {
@@ -590,113 +612,43 @@ function escapeHtml(str) {
     });
 }
 
-// ======================= 建议箱提交逻辑 =======================
-document.getElementById('suggestion-form').addEventListener('submit', function(e) {
-    e.preventDefault();
-    const text = document.getElementById('suggestion-text').value.trim();
-    
-    if(text) {
-        // 保存反馈
-        const feedbacks = JSON.parse(localStorage.getItem('feedbacks') || '[]');
-        const now = new Date();
-        const timeStr = `${now.getFullYear()}-${now.getMonth()+1}-${now.getDate()} ${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}:${now.getSeconds().toString().padStart(2,'0')}`;
-        feedbacks.push({ content: text, time: timeStr });
-        localStorage.setItem('feedbacks', JSON.stringify(feedbacks));
-        
-        alert("✅ 收到建议！");
-        
-        // 面包特效
-        const btnRect = e.target.querySelector('button').getBoundingClientRect();
-        const fakeEvent = { clientX: btnRect.left + btnRect.width / 2, clientY: btnRect.top + btnRect.height / 2 };
-        for(let i=0; i<3; i++) {
-            setTimeout(() => { document.dispatchEvent(new MouseEvent('mousedown', fakeEvent)); }, i * 100);
+// 🥖 面包喷泉特效（单独保留，不和后台冲突）
+(function() {
+    const bt = ['🍞','🥐','🥖','🥨','🥯','🧸'];
+    document.addEventListener('mousedown', function(e) {
+        for(let i=0; i<8; i++){
+            const el = document.createElement('div');
+            el.className = 'bread-emoji';
+            el.textContent = bt[Math.floor(Math.random() * bt.length)];
+            el.style.fontSize = (Math.random() * 20 + 30) + 'px';
+            document.body.appendChild(el);
+            
+            let x = e.clientX, y = e.clientY;
+            let vx = (Math.random() - 0.5) * 10;
+            let vy = (Math.random() - 0.5) * 10;
+            let o = 1;
+            let rotation = 0;
+            let rv = (Math.random() - 0.5) * 5;
+            
+            (function animate() {
+                x += vx;
+                y += vy + 0.15;
+                rotation += rv;
+                o -= 0.02;
+                
+                el.style.left = x + 'px';
+                el.style.top = y + 'px';
+                el.style.opacity = o;
+                el.style.transform = `translate(-50%, -50%) rotate(${rotation}deg)`;
+                
+                if (o > 0) {
+                    requestAnimationFrame(animate);
+                } else {
+                    el.remove();
+                }
+            })();
         }
-        
-        document.getElementById('suggestion-text').value = '';
-    }
-});
-
-// 保留原有的面包喷泉特效
-const bt = ['🍞','🥐','🥖','🥨','🥯','🧸'];
-document.addEventListener('mousedown', e => {
-    for(let i=0; i<8; i++){
-        const el = document.createElement('div');
-        el.className = 'bread-emoji';
-        el.textContent = bt[Math.random() * bt.length | 0];
-        el.style.fontSize = (Math.random() * 20 + 30) + 'px';
-        document.body.append(el);
-        
-        let x = e.clientX, y = e.clientY, vx = (Math.random() - .5) * 10, vy = (Math.random() - .5) * 10, o = 1, rotation = 0, rv = (Math.random() - .5) * 5;
-        (function f(){
-            x += vx; y += vy + 0.15; rotation += rv; o -= 0.02;
-            el.style.left = x + 'px'; el.style.top = y + 'px'; el.style.opacity = o;
-            el.style.transform = `translate(-50%, -50%) rotate(${rotation}deg)`;
-            o > 0 ? requestAnimationFrame(f) : el.remove();
-        })();
-    }
-});
-</script>
-<!-- 后台入口按钮 -->
-<div class="fixed bottom-6 left-6 z-50">
-    <button id="secret-admin-trigger" class="bg-black/40 backdrop-blur-md hover:bg-orange-700 text-white p-3 rounded-full shadow-2xl transition-all border border-white/30 group">
-        <span class="text-2xl group-hover:rotate-12 transition-transform">🔐</span>
-        <span class="sr-only">管理入口</span>
-    </button>
-</div>
-
-<!-- 密码验证弹窗 -->
-<div id="password-modal" class="hidden fixed inset-0 z-[300] password-modal flex items-center justify-center">
-    <div class="bg-stone-900/90 rounded-2xl p-8 max-w-md w-full mx-4 border border-amber-500/50 shadow-2xl">
-        <div class="text-center mb-6">
-            <div class="text-5xl mb-3">🍞🔐</div>
-            <h3 class="text-2xl font-bold text-amber-300">管理员验证</h3>
-            <p class="text-stone-400 text-sm mt-2">请输入后台访问密码</p>
-        </div>
-        <input type="password" id="admin-password-input" placeholder="输入密码..." 
-               class="password-input w-full p-3 rounded-xl mb-4 text-lg">
-        <div id="password-error" class="text-red-400 text-sm mb-3 hidden">❌ 密码错误，请重试</div>
-        <button id="password-submit-btn" class="w-full py-3 bg-orange-600 hover:bg-orange-700 rounded-xl font-bold text-white transition-all">
-            确认进入
-        </button>
-        <button id="password-cancel-btn" class="w-full mt-3 py-2 bg-stone-700 hover:bg-stone-600 rounded-xl text-stone-300 text-sm transition-all">
-            取消
-        </button>
-        <div class="text-center mt-4 text-stone-500 text-xs">
-            <span>默认密码: </span>
-            <code class="bg-stone-800 px-2 py-0.5 rounded">admin123</code>
-        </div>
-    </div>
-</div>
-
-<!-- 后台面板 -->
-<div id="admin-dashboard" class="hidden fixed inset-0 z-[200] overflow-y-auto p-6 pt-20 no-scrollbar">
-    <div class="container max-w-4xl mx-auto relative">
-        <button id="close-admin-btn" class="fixed top-6 right-6 bg-stone-900/80 hover:bg-red-700 text-white px-5 py-2 rounded-full backdrop-blur-md border border-white/30 font-bold z-[210] transition-all">✕ 关闭后台</button>
-        
-        <div class="admin-glass rounded-3xl p-6 md:p-8 shadow-2xl border border-amber-400/50">
-            <div class="flex items-center justify-between border-b border-amber-400/30 pb-4 mb-6">
-                <div class="flex items-center gap-3">
-                    <div class="text-4xl">🍞🔐</div>
-                    <h2 class="text-3xl font-black text-amber-200">面包工坊 · 私密管理台</h2>
-                    <div class="admin-badge text-xs px-3 py-1 rounded-full text-white font-mono ml-2">仅站长可见</div>
-                </div>
-                <div class="text-amber-300 text-sm bg-black/30 px-3 py-1 rounded-full">反馈总数: <span id="total-feedback-count">0</span></div>
-            </div>
-            
-            <div id="admin-feedback-list" class="space-y-3 max-h-[55vh] overflow-y-auto pr-2 mb-4">
-                <div class="text-center py-12 text-amber-300/60 italic">暂无反馈</div>
-            </div>
-            
-            <div class="mt-6 flex flex-wrap gap-3 justify-between items-center border-t border-amber-400/30 pt-5">
-                <div class="text-xs text-amber-300/70">💡 只有你可以看到这些反馈</div>
-                <div class="flex gap-2">
-                    <button id="change-password-btn" class="bg-amber-700/50 hover:bg-amber-600 text-white px-4 py-2 rounded-xl text-sm font-medium">🔑 修改密码</button>
-                    <button id="clear-all-feedback-btn" class="bg-stone-800/70 hover:bg-red-800 text-white px-4 py-2 rounded-xl text-sm font-medium">🗑️ 清空全部</button>
-                    <button id="refresh-admin-btn" class="bg-amber-700/50 hover:bg-amber-600 text-white px-4 py-2 rounded-xl text-sm font-medium">🔄 刷新</button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+    });
+})();
 </body>
 </html>
