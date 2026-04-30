@@ -55,43 +55,6 @@
             .image-container { max-width: 100%; height: 200px; }
         }
         .no-scrollbar::-webkit-scrollbar { display: none; }
-        /* 密码弹窗样式 */
-        .password-modal {
-            background: rgba(0,0,0,0.85);
-            backdrop-filter: blur(12px);
-        }
-        .password-input {
-            background: rgba(255,255,255,0.15);
-            border: 1px solid rgba(255,215,0,0.5);
-            color: white;
-        }
-        .password-input:focus {
-            outline: none;
-            border-color: #f97316;
-            box-shadow: 0 0 10px rgba(249,115,22,0.3);
-        }
-        .admin-glass {
-            background: rgba(20, 20, 30, 0.85);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255,215,0,0.4);
-            box-shadow: 0 25px 40px rgba(0,0,0,0.3);
-        }
-        .feedback-item {
-            background: rgba(255,255,240,0.1);
-            border-left: 4px solid #f97316;
-            transition: all 0.2s;
-            padding: 12px;
-            margin-bottom: 8px;
-            border-radius: 12px;
-        }
-        .feedback-item:hover {
-            background: rgba(255,255,240,0.2);
-            transform: translateX(4px);
-        }
-        .admin-badge {
-            background: #ef6c00;
-            box-shadow: 0 0 8px rgba(239,108,0,0.6);
-        }
     </style>
 </head>
 <body class="overflow-x-hidden">
@@ -114,27 +77,6 @@
             </div>
         </div>
     </main>
-    <section class="container mx-auto px-6 max-w-2xl mt-20 pb-20">
-    <div class="glass-card p-8 rounded-[2rem] shadow-xl border border-white/30">
-        <h3 class="text-2xl font-black text-stone-800 mb-4 flex items-center gap-2">
-            <span>📮</span> 玩家建议箱
-        </h3>
-        <form id="suggestion-form" class="space-y-4">
-            <textarea 
-                id="suggestion-text"
-                required
-                class="w-full h-32 p-4 bg-white/40 border border-stone-300 rounded-2xl focus:ring-2 focus:ring-orange-400 focus:outline-none placeholder-stone-500 text-stone-800 transition-all"
-                placeholder="提点建议吧……"
-            ></textarea>
-            <button 
-                type="submit"
-                class="w-full py-4 bg-orange-600 hover:bg-orange-700 text-white font-bold rounded-2xl shadow-lg active:scale-95 transition-all"
-            >
-                投递建议
-            </button>
-        </form>
-    </div>
-</section>
 </div>
 
 <div id="detail-page" class="hidden fixed inset-0 overflow-y-auto bg-transparent p-6 pt-32 no-scrollbar z-[100]">
@@ -158,6 +100,7 @@
     </div>
 </div>
 
+<script>
 // 👇 你的所有数据 100% 原样不动
 const contentData = {
     survival: { title: "板块一：生存指南", items: [{name:"1. 基础准备", subItems:["1.1 基础工具", "1.2 建筑材料"]}, "2. 饥饿值&血量", "3. 村民贸易", "4. 合理的“外挂”", "5. 下界&末地“通行证”", "6. 高级追求", "7. 全成就"] },
@@ -417,238 +360,47 @@ function showTactical(data) {
 function closeArticle() { hide('article-overlay'); }
 function backToHome() { hide('detail-page'); show('home-page'); }
 
-// ======================= 🔐 后台管理系统 =======================
+// 🥖 豪华版：高产量、低速飘落的面包喷泉
+const bt = ['🍞','🥐','🥖','🥨','🥯','🧸'];
+document.addEventListener('mousedown', e => {
+    // 📈 数量从 6 增加到了 8，满屏都是面包！
+    for(let i=0; i<8; i++){
+        const el = document.createElement('div');
+        el.className = 'bread-emoji';
+        el.textContent = bt[Math.random() * bt.length | 0];
+        
+        // ✨ 新增：让面包大小随机（30px - 50px），看起来更像立体喷发
+        el.style.fontSize = (Math.random() * 20 + 30) + 'px';
+        
+        document.body.append(el);
+        
+        // 📉 速度保持柔和，vx/vy 控制在 10 以内
+        let x = e.clientX, 
+            y = e.clientY, 
+            vx = (Math.random() - .5) * 10, 
+            vy = (Math.random() - .5) * 10, 
+            o = 1,
+            // 🔄 新增：给每个面包一个随机旋转速度，更有动感
+            rotation = 0,
+            rv = (Math.random() - .5) * 5;
 
-// 初始化存储
-if (!localStorage.getItem('admin_password')) {
-    localStorage.setItem('admin_password', 'admin123');
-}
-if (!localStorage.getItem('feedbacks')) {
-    localStorage.setItem('feedbacks', JSON.stringify([]));
-}
-
-// 等待DOM加载完成再绑定事件
-document.addEventListener('DOMContentLoaded', function() {
-    // 后台入口按钮
-    const adminTrigger = document.getElementById('secret-admin-trigger');
-    if (adminTrigger) {
-        adminTrigger.addEventListener('click', function() {
-            const modal = document.getElementById('password-modal');
-            if (modal) modal.classList.remove('hidden');
-            const pwdInput = document.getElementById('admin-password-input');
-            if (pwdInput) pwdInput.value = '';
-            const errorDiv = document.getElementById('password-error');
-            if (errorDiv) errorDiv.classList.add('hidden');
-        });
-    }
-    
-    // 密码提交
-    const submitBtn = document.getElementById('password-submit-btn');
-    if (submitBtn) {
-        submitBtn.addEventListener('click', function() {
-            const inputPwd = document.getElementById('admin-password-input').value;
-            const correctPwd = localStorage.getItem('admin_password');
+        (function f(){
+            // 🎈 物理逻辑：x位移，y位移+微小重力(0.15)
+            x += vx; y += vy + 0.15; 
+            rotation += rv;
             
-            if (inputPwd === correctPwd) {
-                const modal = document.getElementById('password-modal');
-                if (modal) modal.classList.add('hidden');
-                renderAdminPanel();
-                const dashboard = document.getElementById('admin-dashboard');
-                const home = document.getElementById('home-page');
-                if (dashboard) dashboard.classList.remove('hidden');
-                if (home) home.classList.add('hidden');
-            } else {
-                const errorDiv = document.getElementById('password-error');
-                if (errorDiv) errorDiv.classList.remove('hidden');
-            }
-        });
-    }
-    
-    // 取消按钮
-    const cancelBtn = document.getElementById('password-cancel-btn');
-    if (cancelBtn) {
-        cancelBtn.addEventListener('click', function() {
-            const modal = document.getElementById('password-modal');
-            if (modal) modal.classList.add('hidden');
-        });
-    }
-    
-    // 回车提交
-    const pwdInput = document.getElementById('admin-password-input');
-    if (pwdInput) {
-        pwdInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                const btn = document.getElementById('password-submit-btn');
-                if (btn) btn.click();
-            }
-        });
-    }
-    
-    // 关闭后台
-    const closeBtn = document.getElementById('close-admin-btn');
-    if (closeBtn) {
-        closeBtn.addEventListener('click', function() {
-            const dashboard = document.getElementById('admin-dashboard');
-            const home = document.getElementById('home-page');
-            if (dashboard) dashboard.classList.add('hidden');
-            if (home) home.classList.remove('hidden');
-        });
-    }
-    
-    // 清空全部
-    const clearBtn = document.getElementById('clear-all-feedback-btn');
-    if (clearBtn) {
-        clearBtn.addEventListener('click', function() {
-            if (confirm('⚠️ 确定要清空所有反馈吗？')) {
-                localStorage.setItem('feedbacks', JSON.stringify([]));
-                renderAdminPanel();
-                alert('✅ 已清空');
-            }
-        });
-    }
-    
-    // 刷新
-    const refreshBtn = document.getElementById('refresh-admin-btn');
-    if (refreshBtn) {
-        refreshBtn.addEventListener('click', function() {
-            renderAdminPanel();
-        });
-    }
-    
-    // 修改密码
-    const changePwdBtn = document.getElementById('change-password-btn');
-    if (changePwdBtn) {
-        changePwdBtn.addEventListener('click', function() {
-            const oldPwd = prompt('请输入当前密码：');
-            const currentPwd = localStorage.getItem('admin_password');
+            // ⏳ 消失速度：0.01 让它在屏幕上飘得更久
+            o -= 0.02; 
             
-            if (oldPwd !== currentPwd) {
-                alert('❌ 当前密码错误！');
-                return;
-            }
+            el.style.left = x + 'px'; 
+            el.style.top = y + 'px'; 
+            el.style.opacity = o;
+            el.style.transform = `translate(-50%, -50%) rotate(${rotation}deg)`;
             
-            const newPwd = prompt('请输入新密码（至少4位）：');
-            if (newPwd && newPwd.length >= 4) {
-                localStorage.setItem('admin_password', newPwd);
-                alert('✅ 密码修改成功！新密码：' + newPwd);
-            } else if (newPwd) {
-                alert('❌ 密码长度至少4位');
-            }
-        });
-    }
-    
-    // 建议箱提交
-    const form = document.getElementById('suggestion-form');
-    if (form) {
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const text = document.getElementById('suggestion-text').value.trim();
-            
-            if(text) {
-                const feedbacks = JSON.parse(localStorage.getItem('feedbacks') || '[]');
-                const now = new Date();
-                const timeStr = `${now.getFullYear()}-${now.getMonth()+1}-${now.getDate()} ${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}:${now.getSeconds().toString().padStart(2,'0')}`;
-                feedbacks.push({ content: text, time: timeStr });
-                localStorage.setItem('feedbacks', JSON.stringify(feedbacks));
-                
-                alert("✅ 收到建议！");
-                
-                // 面包特效
-                const btnRect = e.target.querySelector('button').getBoundingClientRect();
-                const fakeEvent = { clientX: btnRect.left + btnRect.width / 2, clientY: btnRect.top + btnRect.height / 2 };
-                for(let i=0; i<3; i++) {
-                    setTimeout(() => { document.dispatchEvent(new MouseEvent('mousedown', fakeEvent)); }, i * 100);
-                }
-                
-                document.getElementById('suggestion-text').value = '';
-            }
-        });
+            o > 0 ? requestAnimationFrame(f) : el.remove();
+        })();
     }
 });
-
-// 渲染反馈列表
-function renderAdminPanel() {
-    const feedbacks = JSON.parse(localStorage.getItem('feedbacks') || '[]');
-    const container = document.getElementById('admin-feedback-list');
-    const totalSpan = document.getElementById('total-feedback-count');
-    
-    if (totalSpan) totalSpan.innerText = feedbacks.length;
-    
-    if (!container) return;
-    
-    if (feedbacks.length === 0) {
-        container.innerHTML = '<div class="text-center py-12 text-amber-300/60 italic">✨ 暂无反馈 ✨</div>';
-        return;
-    }
-    
-    container.innerHTML = feedbacks.slice().reverse().map((fb, idx) => `
-        <div class="feedback-item">
-            <div class="flex justify-between items-start">
-                <div class="flex-1">
-                    <div class="text-amber-300 text-sm mb-1">📝 ${escapeHtml(fb.time)}</div>
-                    <div class="text-white text-base break-words">${escapeHtml(fb.content)}</div>
-                </div>
-                <button onclick="deleteFeedback(${feedbacks.length - 1 - idx})" class="text-stone-500 hover:text-red-400 ml-3 text-xl leading-5">🗑️</button>
-            </div>
-        </div>
-    `).join('');
-}
-
-// 删除单条
-window.deleteFeedback = function(index) {
-    let feedbacks = JSON.parse(localStorage.getItem('feedbacks') || '[]');
-    feedbacks.splice(index, 1);
-    localStorage.setItem('feedbacks', JSON.stringify(feedbacks));
-    renderAdminPanel();
-};
-
-// HTML转义
-function escapeHtml(str) {
-    return str.replace(/[&<>]/g, function(m) {
-        if (m === '&') return '&amp;';
-        if (m === '<') return '&lt;';
-        if (m === '>') return '&gt;';
-        return m;
-    });
-}
-
-// 🥖 面包喷泉特效（单独保留，不和后台冲突）
-(function() {
-    const bt = ['🍞','🥐','🥖','🥨','🥯','🧸'];
-    document.addEventListener('mousedown', function(e) {
-        for(let i=0; i<8; i++){
-            const el = document.createElement('div');
-            el.className = 'bread-emoji';
-            el.textContent = bt[Math.floor(Math.random() * bt.length)];
-            el.style.fontSize = (Math.random() * 20 + 30) + 'px';
-            document.body.appendChild(el);
-            
-            let x = e.clientX, y = e.clientY;
-            let vx = (Math.random() - 0.5) * 10;
-            let vy = (Math.random() - 0.5) * 10;
-            let o = 1;
-            let rotation = 0;
-            let rv = (Math.random() - 0.5) * 5;
-            
-            (function animate() {
-                x += vx;
-                y += vy + 0.15;
-                rotation += rv;
-                o -= 0.02;
-                
-                el.style.left = x + 'px';
-                el.style.top = y + 'px';
-                el.style.opacity = o;
-                el.style.transform = `translate(-50%, -50%) rotate(${rotation}deg)`;
-                
-                if (o > 0) {
-                    requestAnimationFrame(animate);
-                } else {
-                    el.remove();
-                }
-            })();
-        }
-    });
-})();
+</script>
 </body>
 </html>
