@@ -435,6 +435,23 @@ document.addEventListener('mousedown', e => {
         })();
     }
 });
+    // ⌨️ 全局按键监听
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        // 1. 如果文章详情弹窗开着，先关文章
+        const articleOverlay = document.getElementById('article-overlay');
+        if (!articleOverlay.classList.contains('hidden')) {
+            closeArticle();
+            return; // 关掉文章就结束，防止连带把列表页也关了
+        }
+
+        // 2. 如果在二级列表页（详情页），返回首页
+        const detailPage = document.getElementById('detail-page');
+        if (!detailPage.classList.contains('hidden')) {
+            backToHome();
+        }
+    }
+});
 </script>
 </body>
 </html>
