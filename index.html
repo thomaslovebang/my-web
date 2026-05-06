@@ -315,18 +315,30 @@ const tacticalData = {
         title: "酿造药水配方全集",
         color: "#d8b4fe",
         steps: [{
-            img: "img/potion_chart.png", 
+            // 👇 关键：这里留空，防止左边出现那个讨厌的小图框
+            img: "", 
             text: `
-                <div style="width: 100%; text-align: center;">
-                    <p style="color: #ffffff; font-size: 1.2rem; margin-bottom: 20px; font-weight: bold;">
+                <div style="width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px 0; margin-left: -20px;">
+                    
+                    <!-- 1. 文字居中放在最上方 -->
+                    <p style="color: #ffffff; font-size: 1.6rem; margin-bottom: 25px; font-weight: bold; text-align: center; width: 100%;">
                         以下为当前版本(26.2)的酿造药水配方，来源：minecraft-wiki
                     </p>
-                    <div style="background: rgba(0,0,0,0.4); padding: 10px; border-radius: 12px;">
+                    
+                    <!-- 2. 图片居中放大显示 -->
+                    <div style="width: 95%; max-width: 900px; background: rgba(255,255,255,0.05); border-radius: 20px; padding: 10px; border: 1px solid rgba(216,180,254,0.2); box-shadow: 0 20px 40px rgba(0,0,0,0.4);">
                         <img src="img/potion_chart.png" 
-                             style="max-width: 100%; height: auto; display: block; margin: 0 auto; border-radius: 8px;"
-                             onerror="this.src='https://via.placeholder.com/800x600?text=图片路径不对，请检查img文件夹';">
+                             style="width: 100%; height: auto; display: block; border-radius: 12px;" 
+                             alt="药水合成图">
                     </div>
                 </div>
+
+                <style>
+                    /* 彻底移除左侧那个空白的小容器，让右侧内容横跨整个宽度 */
+                    #article-content .tutorial-step { display: block !important; }
+                    #article-content .image-container { display: none !important; }
+                    #article-content .flex-grow { width: 100% !important; padding: 0 !important; }
+                </style>
             `
         }]
     }
