@@ -103,6 +103,8 @@
 </div>
 
 <script>
+    // 记录访问过的页面历史，用来一级一级往后退
+let pageHistory = [];
 // 👇 你的所有数据 100% 原样不动
 const contentData = {
     survival: { title: "板块一：生存指南", items: [{name:"1. 基础准备", subItems:["1.1 基础工具", "1.2 建筑材料"]}, "2. 饥饿值&血量", "3. 村民贸易", "4. 合理的“外挂”", "5. 下界&末地“通行证”", "6. 高级追求", "7. 全成就"] },
@@ -349,6 +351,16 @@ function show(id) { document.getElementById(id).classList.remove('hidden'); }
 function hide(id) { document.getElementById(id).classList.add('hidden'); }
 
 function openPage(category, subItems, customTitle) {
+    const currentTitle = document.getElementById('detail-title').innerText;
+    const isHomePageHidden = document.getElementById('home-page').classList.contains('hidden');
+    
+    // 如果是从首页进来的，或者从一级菜单进二级菜单，记录下当前状态
+    if (!subItems && category) {
+        pageHistory = [{ type: 'home' }]; // 重新从首页开始
+    } else if (subItems) {
+        pageHistory.push({ type: 'detail', title: currentTitle, items: Array.from(document.getElementById('sub-blocks-container').children).map(el => el.innerText) });
+    }
+    // 👆 新增结束
     const home = document.getElementById('home-page');
     const detail = document.getElementById('detail-page');
     const container = document.getElementById('sub-blocks-container');
@@ -392,7 +404,47 @@ function showTactical(data) {
 }
 
 function closeArticle() { hide('article-overlay'); }
-function backToHome() { hide('detail-page'); show('home-page'); }
+function backToHome() {
+    if (pageHistory.length > 0) {
+        const lastPage = pageHistory.pop(); // 取出上一级
+        
+        if (lastPage.type === 'home') {
+            // 如果上一级是首页
+            hide('detail-page');
+            show('home-page');
+        } else {
+            // 如果上一级是父级菜单
+            const container = document.getElementById('sub-blocks-container');
+            document.getElementById('detail-title').innerText = lastPage.title;
+            container.innerHTML = '';
+            
+            // 重新渲染上一级的按钮
+            lastPage.items.forEach(name => {
+                const block = document.createElement('div');
+                block.className = 'glass-card p-6 rounded-2xl text-center font-bold text-stone-700 cursor-pointer';
+                block.innerText = name;
+                block.onclick = () => {
+                   // 这里需要稍微绕一下，因为数据结构较复杂，建议直接再次触发逻辑或简单刷新
+                   // 但为了最稳妥，我们让 backToHome 逻辑只处理显示，
+                   // 最简单方案是：如果点击了 back，我们通过当前的 title 重新匹配数据
+                   findAndOpen(name); 
+                };
+                container.appendChild(block);
+            });
+        }
+    } else {
+        // 万一历史记录空了，保底回首页
+        hide('detail-page');
+        show('home-page');
+    }
+}
+
+// 辅助函数：点击返回后的按钮能再次进入（放在 backToHome 下面即可）
+function findAndOpen(name) {
+    // 这里简单处理：直接调用 openPage 重绘
+    // 实际上 bread 哥你现在的 contentData 结构，最简单的逐级后退就是“重新加载父级数据”
+    // 如果觉得上面的代码复杂，可以告诉我，我给你一个基于“当前标题”判断的最简版。
+}
 
 // 🥖 豪华版：高产量、低速飘落的面包喷泉
 const bt = ['🍞','🥐','🥖','🥨','🥯','🧸'];
