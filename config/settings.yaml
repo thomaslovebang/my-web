@@ -1,0 +1,128 @@
+hardware:
+  gpu: "NVIDIA RTX 4060 Ti"
+  vram: "16GB"
+  cuda: "12.1"
+
+inference_config:
+  precision: "fp16"
+  batch_size_bert: 64
+  batch_size_llm: 4
+  device: "cuda:0"
+  torch_compile: true
+
+data_sources:
+  primary: "tushare_pro"
+  secondary: "akshare"
+  global_market: "yfinance"
+  removed:
+    - "alpha_vantage"
+    - "fred_api"
+    - "baostock"
+
+tushare:
+  token_env: "TUSHARE_TOKEN"
+  points: 5001
+  api_limit_per_min: 500
+  enabled_apis:
+    # 行情类
+    - daily
+    - daily_basic
+    - adj_factor
+    - suspend_d
+
+    # 资金流向类
+    - moneyflow
+    - hk_hold
+    - margin
+    - margin_detail
+
+    # 龙虎榜类
+    - top_list
+    - top_inst
+
+    # 股东类
+    - stk_holdertrade
+    - stk_holder_number
+
+    # 财务类
+    - fina_indicator
+    - income
+    - balancesheet
+    - cashflow
+    - forecast
+    - express
+
+    # 分析师类（5000积分解锁）
+    - analyst
+    - stk_factor
+
+    # 其他（5000积分解锁）
+    - stk_pledge_stat
+    - stk_surv
+    - index_weight
+    - index_daily
+    - trade_cal
+
+akshare:
+  role: "补充数据源（另类数据+Tushare无覆盖数据）"
+  enabled_apis:
+    - stock_news_em
+    - stock_hot_rank_em
+    - stock_comment_em
+    - stock_hot_tgb
+    - news_cctv
+    - macro_china_pmi
+    - macro_china_cpi
+    - macro_china_money_supply
+
+yfinance:
+  role: "美股+全球宏观"
+  symbols:
+    indices:
+      - "SPY"
+      - "QQQ"
+      - "KWEB"
+      - "CQQQ"
+      - "^VIX"
+      - "^TNX"
+      - "^FVX"
+    commodities:
+      - "GC=F"
+      - "CL=F"
+      - "HG=F"
+    fx:
+      - "USDCNY=X"
+      - "EURCNY=X"
+
+nlp_models:
+  chinese_sentiment:
+    model: "IDEA-CCNL/Erlangshen-Roberta-330M-Sentiment"
+    precision: "fp16"
+    batch_size: 64
+    vram: "~2GB"
+  english_sentiment:
+    model: "ProsusAI/finbert"
+    precision: "fp16"
+    batch_size: 64
+    vram: "~1GB"
+  event_extraction:
+    model: "Qwen/Qwen2.5-7B-Instruct"
+    backend: "vllm"
+    precision: "fp16"
+    batch_size: 4
+    vram: "~8GB"
+    quantization: "none"
+  total_vram: "~11GB / 16GB"
+
+notification:
+  channel: "email"
+  smtp:
+    host_env: "SMTP_HOST"
+    port_env: "SMTP_PORT"
+    user_env: "SMTP_USER"
+    password_env: "SMTP_PASSWORD"
+    to_env: "REPORT_EMAIL_TO"
+    use_ssl: true
+  report_format: "html"
+  send_time: "20:00"
+  subject_template: "【AShare Alpha】{date} 每日选股报告 | 今日推荐{n}只"
